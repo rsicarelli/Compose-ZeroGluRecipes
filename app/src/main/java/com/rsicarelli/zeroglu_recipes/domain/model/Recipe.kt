@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Recipe(
+    val id: String = "",
     val title: String,
     @SerialName("total_time_millis")
     val totalTimeMillis: Long?,
@@ -14,33 +15,33 @@ data class Recipe(
     val instructions: List<Instruction>,
     val language: String
 ) {
-    constructor() : this("", 0L, emptyList(), emptyList(), emptyList(), "")
+    constructor() : this("", "", 0L, emptyList(), emptyList(), emptyList(), "")
 }
 
 @Serializable
 data class Ingredient(
     @SerialName("custom_title")
-    val customTitle: String,
+    val customTitle: String? = null,
     val items: List<String>
 ) {
-    constructor() : this("", emptyList())
+    constructor() : this(null, emptyList())
 }
 
 @Serializable
 data class Instruction(
     @SerialName("custom_title")
-    val customTitle: String,
+    val customTitle: String? = null,
     val steps: List<String>
 ) {
-    constructor() : this("", emptyList())
+    constructor() : this(null, emptyList())
 }
 
 @Serializable
 data class Setup(
-    val custom_title: String,
+    val custom_title: String? = null,
     val bread_shapes: List<String>,
     val browning_level: String,
     val programme: Long? = null
 ) {
-    constructor() : this("", emptyList(), "", 0L)
+    constructor() : this(null, emptyList(), "", 0L)
 }

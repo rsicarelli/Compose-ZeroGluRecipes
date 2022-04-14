@@ -43,7 +43,7 @@ fun HomeScreen(
         columns = GridCells.Fixed(2),
         contentPadding = PaddingValues(8.dp),
         content = {
-            items(state.size, key = { state[it].title.trim() }) {
+            items(state.size) {
                 val containerColor = remember {
                     Color(
                         red = Random.nextInt(0, 255),
