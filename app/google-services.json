@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "806367340235",
+    "project_id": "zeroglu-recipes",
+    "storage_bucket": "zeroglu-recipes.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:806367340235:android:6201873905cafd3758dd4e",
+        "android_client_info": {
+          "package_name": "com.rsicarelli.zeroglu_recipes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "806367340235-ipd0u5vdkp9v98cg7p9dq15t5btf731k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rsicarelli.zeroglu_recipes",
+            "certificate_hash": "728404d4f9fc41fd3e08eae1fe71dad6a633096b"
+          }
+        },
+        {
+          "client_id": "806367340235-ag6rgr5cokugedgjljrc3rhe2ncp9fdg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCsoX1NsPuf1bTo-to0UaLlwqIpG8AUEE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "806367340235-ag6rgr5cokugedgjljrc3rhe2ncp9fdg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
