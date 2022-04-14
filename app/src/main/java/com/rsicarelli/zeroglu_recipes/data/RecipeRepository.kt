@@ -22,7 +22,9 @@ class RecipeRemoteDataSource {
             val collection = firestore.collection("ZeroGlu-Pro")
             val snapshotListener = collection.addSnapshotListener { value, error ->
                 if (error == null) {
-                    _recipes.value = value?.toObjects(Recipe::class.java)?.toList()?.filter { it.title.isNotBlank() } ?: emptyList()
+                    val list = value?.toObjects(Recipe::class.java)?.toList()
+                        ?.filter { it.title.isNotBlank() } ?: emptyList()
+                    _recipes.value = list.map { it.copy() }
                 }
             }
 

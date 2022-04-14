@@ -8,11 +8,13 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,25 +46,18 @@ fun HomeScreen(
         contentPadding = PaddingValues(8.dp),
         content = {
             items(state.size) {
-                val containerColor = remember {
-                    Color(
-                        red = Random.nextInt(0, 255),
-                        green = Random.nextInt(0, 255),
-                        blue = Random.nextInt(0, 255)
-                    )
-                }
+
                 val recipe = state[it]
                 Card(
                     modifier = Modifier
                         .padding(4.dp)
                         .aspectRatio(1F)
                         .clickable { navigator.navigate(RecipeDetailScreenDestination(recipe)) },
-                    containerColor = containerColor
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
                 ) {
                     Text(
                         text = recipe.title,
                         fontSize = 16.sp,
-                        color = contentColorFor(backgroundColor = containerColor),
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(24.dp)
                     )
