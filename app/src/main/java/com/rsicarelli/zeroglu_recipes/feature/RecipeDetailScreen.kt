@@ -1,5 +1,7 @@
 package com.rsicarelli.zeroglu_recipes.feature
 
+import android.icu.text.CaseMap
+import android.widget.Space
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -31,10 +33,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.ramcosta.composedestinations.annotation.Destination
 import com.rsicarelli.zeroglu_recipes.R
+import com.rsicarelli.zeroglu_recipes.domain.model.Ingredient
 import com.rsicarelli.zeroglu_recipes.domain.model.Recipe
 
 @Destination
@@ -52,30 +57,7 @@ fun RecipeDetailScreen(recipe: Recipe) {
             }
         }
 
-        item {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                recipe.ingredients.map { ingredient ->
-                    Column {
-                        Text(
-                            fontWeight = FontWeight.Medium,
-                            fontStyle = FontStyle.Italic,
-                            text = ingredient.custom_title ?: "Ingredients",
-                            style = MaterialTheme.typography.titleLarge
-                        )
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        ingredient.items.filter { it.isNotEmpty() }
-                            .map { it.replace(":", "of") }
-                            .forEach {
-                                Text(text = it, style = MaterialTheme.typography.bodyLarge)
-                            }
-                    }
-                }
-            }
-        }
+        item { IngredientsContainer(recipe.ingredients) }
 
         item {
             recipe.instructions.filter { it.steps.any { a -> a.isNotEmpty() } }
@@ -102,6 +84,55 @@ fun RecipeDetailScreen(recipe: Recipe) {
                             }
                     }
                 }
+        }
+    }
+}
+
+@Composable
+private fun IngredientsContainer(ingredients: List<Ingredient>) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        ingredients.map { ingredient ->
+
+            Text(
+                fontWeight = FontWeight.Medium,
+                fontStyle = FontStyle.Italic,
+                text = ingredient.custom_title?.ifBlank { "Ingredients" } ?: "Ingredients",
+                style = MaterialTheme.typography.titleLarge
+            )
+
+            val valueAndDescription = ingredient.items
+                .map { it.splitToSequence(":") }
+                .map { Pair(it.first().trim(), it.last().trim()) }
+
+            Column {
+                valueAndDescription.forEach {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text(
+                            modifier = Modifier.weight(0.22F),
+                            text = it.first,
+                            textAlign = TextAlign.End,
+                            maxLines = 1,
+                            style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp),
+                            overflow = TextOverflow.Ellipsis,
+                        )
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        Text(
+                            text = it.second,
+                            style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp),
+                            textAlign = TextAlign.Start,
+                            modifier = Modifier.weight(0.77f),
+                        )
+                    }
+                }
+
+            }
         }
     }
 }
@@ -196,36 +227,6 @@ private fun SettingsContainer(recipe: Recipe) {
                             .padding(4.dp)
                             .defaultMinSize(35.dp) //Use a min size for short text.
                     )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun <T> Table(
-    columnCount: Int,
-    cellWidth: (index: Int) -> Dp,
-    data: List<T>,
-    modifier: Modifier = Modifier,
-    headerCellContent: @Composable (index: Int) -> Unit,
-    cellContent: @Composable (index: Int, item: T) -> Unit,
-) {
-    LazyRow(
-        modifier = Modifier.padding(16.dp)
-    ) {
-        items((0 until columnCount).toList()) { columnIndex ->
-            Column {
-                (0..data.size).forEach { index ->
-                    Surface(
-                        border = BorderStroke(1.dp, Color.LightGray),
-                        contentColor = Color.Transparent,
-                        modifier = Modifier.width(cellWidth(columnIndex))
-                    ) {
-                        if (index != 0) {
-                            cellContent(columnIndex, data[index - 1])
-                        }
-                    }
                 }
             }
         }
