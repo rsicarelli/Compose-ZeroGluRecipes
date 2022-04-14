@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -42,43 +43,38 @@ fun RecipeDetailScreen(recipe: Recipe) {
 
     LazyColumn(
         contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(40.dp)
     ) {
-
         item {
-            Text(
-                text = recipe.title,
-                fontWeight = FontWeight.Medium,
-                style = MaterialTheme.typography.headlineMedium
-            )
+            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                Title(recipe.title)
+                SettingsContainer(recipe)
+            }
         }
 
         item {
-            SettingsContainer(recipe)
-        }
-
-        item {
-            recipe.ingredients.filter { it.items.any { a -> a.isNotEmpty() } }
-                .forEachIndexed { index, ingredient ->
-                    if (index > 0) {
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
+            Column(
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                recipe.ingredients.map { ingredient ->
                     Column {
                         Text(
                             fontWeight = FontWeight.Medium,
                             fontStyle = FontStyle.Italic,
-                            text = ingredient.customTitle ?: "Ingredients",
+                            text = ingredient.custom_title ?: "Ingredients",
                             style = MaterialTheme.typography.titleLarge
                         )
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        ingredient.items.filter { it.isNotEmpty() }.map { it.replace(":", "of") }
+                        ingredient.items.filter { it.isNotEmpty() }
+                            .map { it.replace(":", "of") }
                             .forEach {
                                 Text(text = it, style = MaterialTheme.typography.bodyLarge)
                             }
                     }
                 }
+            }
         }
 
         item {
@@ -91,7 +87,7 @@ fun RecipeDetailScreen(recipe: Recipe) {
                         Text(
                             fontWeight = FontWeight.Medium,
                             fontStyle = FontStyle.Italic,
-                            text = instruction.customTitle ?: "Method",
+                            text = instruction.custom_title ?: "Method",
                             style = MaterialTheme.typography.titleLarge
                         )
 
@@ -111,52 +107,67 @@ fun RecipeDetailScreen(recipe: Recipe) {
 }
 
 @Composable
+private fun Title(recipe: String) {
+    Text(
+        text = recipe,
+        fontWeight = FontWeight.Medium,
+        style = MaterialTheme.typography.headlineMedium
+    )
+}
+
+@Composable
 private fun SettingsContainer(recipe: Recipe) {
-    Column {
-        recipe.setup.forEachIndexed { index, setup ->
-            if (index > 0) Spacer(modifier = Modifier.height(8.dp))
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        recipe.setup.forEach { setup ->
+            setup.custom_title?.let {
+                Text(
+                    fontWeight = FontWeight.Medium,
+                    fontStyle = FontStyle.Italic,
+                    text = it,
+                    style = MaterialTheme.typography.titleLarge
+                )
+            }
 
-            Text(
-                fontWeight = FontWeight.Medium,
-                fontStyle = FontStyle.Italic,
-                text = setup.custom_title?.ifBlank { "Setup" } ?: "Setup",
-                style = MaterialTheme.typography.titleLarge
-            )
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Row {
-                setup.bread_shapes.filter { it.isNotEmpty() }.forEach {
-                    val icon = when {
-                        it.contains("large") -> R.drawable.ic_shape_large
-                        it.contains("medium") -> R.drawable.ic_shape_medium
-                        it.contains("small") -> R.drawable.ic_shape_small
-                        else -> 0
-                    }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                setup.bread_shapes.filter { it.isNotEmpty() }.forEach { shape ->
                     Icon(
                         modifier = Modifier.size(48.dp),
-                        painter = painterResource(id = icon),
-                        contentDescription = ""
+                        painter = painterResource(
+                            id = when (shape) {
+                                "large" -> R.drawable.ic_shape_large
+                                "medium" -> R.drawable.ic_shape_medium
+                                "small" -> R.drawable.ic_shape_small
+                                else -> 0
+                            }
+                        ),
+                        contentDescription = shape
                     )
                 }
 
-
-                val icon = when (setup.browning_level) {
-                    "low" -> R.drawable.ic_browning_low
-                    "medium" -> R.drawable.ic_browning_medium
-                    "high" -> R.drawable.ic_browning_high
-                    else -> -1
-                }
                 Icon(
                     modifier = Modifier.size(48.dp),
-                    painter = painterResource(id = icon),
-                    contentDescription = ""
+                    painter = painterResource(
+                        id = when (setup.browning_level) {
+                            "low" -> R.drawable.ic_browning_low
+                            "medium" -> R.drawable.ic_browning_medium
+                            "high" -> R.drawable.ic_browning_high
+                            else -> -1
+                        }
+                    ),
+                    contentDescription = setup.browning_level
                 )
 
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
-                        .border(2.dp, Color.Black, shape = CircleShape)
+                        .border(2.dp, MaterialTheme.colorScheme.onSurface, shape = CircleShape)
                         .layout { measurable, constraints ->
                             // Measure the composable
                             val placeable = measurable.measure(constraints)
@@ -185,8 +196,6 @@ private fun SettingsContainer(recipe: Recipe) {
                             .padding(4.dp)
                             .defaultMinSize(35.dp) //Use a min size for short text.
                     )
-
-
                 }
             }
         }

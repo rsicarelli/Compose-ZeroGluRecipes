@@ -1,11 +1,16 @@
 package com.rsicarelli.zeroglu_recipes.feature.home
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.android.material.card.MaterialCardView
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.rsicarelli.zeroglu_recipes.data.RecipeRemoteDataSource
@@ -41,25 +47,25 @@ fun HomeScreen(
 ) {
     val state by viewModel.state.collectAsState()
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
+    LazyColumn(
         contentPadding = PaddingValues(8.dp),
+        verticalArrangement = Arrangement.spacedBy(24.dp),
         content = {
             items(state.size) {
-
                 val recipe = state[it]
                 Card(
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .aspectRatio(1F)
-                        .clickable { navigator.navigate(RecipeDetailScreenDestination(recipe)) },
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    onClick = { navigator.navigate(RecipeDetailScreenDestination(recipe)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    shape = RoundedCornerShape(32.dp)
                 ) {
                     Text(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(start = 24.dp, top = 16.dp, bottom = 16.dp, end = 16.dp),
                         text = recipe.title,
                         fontSize = 16.sp,
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(24.dp)
                     )
                 }
             }

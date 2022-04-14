@@ -20,8 +20,7 @@ data class Recipe(
 
 @Serializable
 data class Ingredient(
-    @SerialName("custom_title")
-    val customTitle: String? = null,
+    val custom_title: String? = null,
     val items: List<String>
 ) {
     constructor() : this(null, emptyList())
@@ -29,8 +28,7 @@ data class Ingredient(
 
 @Serializable
 data class Instruction(
-    @SerialName("custom_title")
-    val customTitle: String? = null,
+    val custom_title: String? = null,
     val steps: List<String>
 ) {
     constructor() : this(null, emptyList())
