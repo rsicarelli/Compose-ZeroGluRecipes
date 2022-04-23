@@ -1,12 +1,13 @@
 package com.rsicarelli.zeroglu_recipes.feature.home
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,10 +26,10 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.rsicarelli.zeroglu_recipes.data.RecipeRemoteDataSource
 import com.rsicarelli.zeroglu_recipes.data.Tag
+import com.rsicarelli.zeroglu_recipes.domain.model.Recipe
 import com.rsicarelli.zeroglu_recipes.feature.destinations.RecipeDetailScreenDestination
 import com.rsicarelli.zeroglu_recipes.feature.home.components.ChipGroup
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Destination(start = true)
 @Composable
 fun HomeScreen(
@@ -41,43 +42,62 @@ fun HomeScreen(
     val tags by viewModel.tags.collectAsState()
     val selectedTags by viewModel.selectedTags.collectAsState()
 
+    Content(tags, selectedTags, viewModel, recipes, navigator)
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun Content(
+    tags: List<Tag>,
+    selectedTags: Set<Tag>,
+    viewModel: HomeViewModel,
+    recipes: List<Recipe>,
+    navigator: DestinationsNavigator
+) {
     LazyColumn(
         contentPadding = PaddingValues(8.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         content = {
-            item {
+            stickyHeader {
                 ChipGroup(
+                    modifier = Modifier.background(MaterialTheme.colorScheme.surface),
                     items = tags,
                     selectedCar = selectedTags.toList(),
-                    onSelectedChanged = {
-                        viewModel.onTagSelected(it)
-                    },
-                    chipName = {
-                        it.description.getOrDefault("en", "aaa")
-                    }
+                    onSelectedChanged = { viewModel.onTagSelected(it) },
+                    chipName = { it.description.getOrDefault("en", "aaa") }
                 )
             }
+
             items(
                 count = recipes.size,
                 key = { recipes[it].index }
             ) {
-                val recipe = recipes[it]
-                Card(
-                    onClick = { navigator.navigate(RecipeDetailScreenDestination(recipe)) },
-                    modifier = Modifier.fillMaxWidth(),
-//                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    shape = RoundedCornerShape(32.dp)
-                ) {
-                    Text(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(start = 24.dp, top = 16.dp, bottom = 16.dp, end = 16.dp),
-                        text = "${recipe.index}. ${recipe.title}",
-                        fontSize = 16.sp,
-                    )
-                }
+                RecipeItem(recipes, it, navigator)
             }
         })
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun RecipeItem(
+    recipes: List<Recipe>,
+    it: Int,
+    navigator: DestinationsNavigator
+) {
+    val recipe = recipes[it]
+    Card(
+        onClick = { navigator.navigate(RecipeDetailScreenDestination(recipe)) },
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(32.dp)
+    ) {
+        Text(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(start = 24.dp, top = 16.dp, bottom = 16.dp, end = 16.dp),
+            text = "${recipe.index}. ${recipe.title}",
+            fontSize = 16.sp,
+        )
+    }
 }
 
 class HomeViewModelFactory(private val recipeDataSource: RecipeRemoteDataSource) :

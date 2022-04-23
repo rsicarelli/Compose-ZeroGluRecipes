@@ -2,12 +2,9 @@ package com.rsicarelli.zeroglu_recipes.feature.home.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandHorizontally
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,11 +16,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,12 +27,13 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun <T> ChipGroup(
+    modifier: Modifier,
     items: List<T>,
     selectedCar: List<T> = listOf(),
     chipName: (T) -> String,
     onSelectedChanged: (T) -> Unit = {},
 ) {
-    Column(modifier = Modifier.padding(8.dp)) {
+    Column(modifier = modifier.padding(8.dp)) {
         LazyRow {
             items(items.size) {
                 val item = items[it]
@@ -55,7 +51,7 @@ fun <T> ChipGroup(
 
 @Composable
 fun Chip(
-    name: String = "Chip",
+    name: String,
     isSelected: Boolean = false,
     onSelectionChanged: (String) -> Unit = {},
     selectedBackgroundColor: Color = MaterialTheme.colorScheme.primary
@@ -92,8 +88,6 @@ fun Chip(
         ) {
             AnimatedVisibility(
                 visible = isSelected,
-                enter = expandHorizontally(expandFrom = Alignment.Start),
-                exit = shrinkHorizontally(shrinkTowards = Alignment.Start)
             ) {
                 Icon(
                     modifier = Modifier.padding(start = 4.dp),
