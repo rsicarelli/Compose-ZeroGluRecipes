@@ -7,8 +7,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.BoxWithConstraintsScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.defaultMinSize
@@ -18,12 +16,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.InlineTextContent
-import androidx.compose.foundation.text.InternalFoundationTextApi
-import androidx.compose.foundation.text.TextDelegate
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
@@ -34,24 +28,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layout
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalFontFamilyResolver
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextLayoutResult
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.min
-import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstrainedLayoutReference
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintLayoutScope
@@ -146,27 +125,11 @@ private fun RecipeItem(
                 .padding(16.dp)
                 .fillMaxWidth()
         ) {
-            val (indexRef, titleRef, subtitleRef, tagsRef) = createRefs()
-            val endGuideline = createGuidelineFromEnd(18.dp)
-
-//            Text(
-//                modifier = Modifier
-//                    .constrainAs(indexRef) {
-//                        top.linkTo(parent.top)
-//                        bottom.linkTo(parent.bottom)
-//                        start.linkTo(parent.start)
-//                    },
-//                text = recipe.index.toString(),
-//                style = MaterialTheme.typography.titleLarge.copy(
-//                    fontWeight = FontWeight.ExtraLight,
-//                    fontStyle = FontStyle.Italic
-//                ),
-//                fontSize = 94.sp,
-//            )
+            val (indexRef, titleRef, tagsRef) = createRefs()
+            val rightGuideline = createGuidelineFromEnd(0.dp)
 
             IndexTitle(indexRef, recipe.index.toString())
 
-            val title = derivedStateOf { recipe.title.split("with") }
             val tags = derivedStateOf {
                 recipe.tags.filterNot {
                     it.description.containsValue("Loaf") ||
@@ -175,7 +138,6 @@ private fun RecipeItem(
                             it.description.containsValue("Roll")
                 }
             }
-            val rightGuideline = createGuidelineFromEnd(0.dp)
 
             Text(
                 modifier = Modifier
@@ -185,8 +147,6 @@ private fun RecipeItem(
                         bottom.linkTo(indexRef.bottom)
                         end.linkTo(rightGuideline, 16.dp)
                         width = Dimension.fillToConstraints
-
-//                        end.linkTo(parent.end)
                     },
                 text = recipe.title.trim(),
                 style = MaterialTheme.typography.headlineMedium,
@@ -223,8 +183,7 @@ private fun ConstraintLayoutScope.IndexTitle(
                 start.linkTo(parent.start)
             }
             .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.3F), shape = CircleShape)
-            .layout() { measurable, constraints ->
-                // Measure the composable
+            .layout { measurable, constraints ->
                 val placeable = measurable.measure(constraints)
 
                 val currentHeight = placeable.height
@@ -271,139 +230,6 @@ private fun RecipeItemChip(tag: String) {
             style = MaterialTheme.typography.labelMedium
         )
     }
-}
-
-@Composable
-fun AutoSizeText(
-    text: String,
-    modifier: Modifier = Modifier,
-    color: Color = Color.Unspecified,
-    suggestedFontSizes: List<TextUnit> = emptyList(),
-    fontStyle: FontStyle? = null,
-    fontWeight: FontWeight? = null,
-    fontFamily: FontFamily? = null,
-    letterSpacing: TextUnit = TextUnit.Unspecified,
-    textDecoration: TextDecoration? = null,
-    textAlign: TextAlign? = null,
-    lineHeight: TextUnit = TextUnit.Unspecified,
-    overflow: TextOverflow = TextOverflow.Clip,
-    softWrap: Boolean = true,
-    maxLines: Int = Int.MAX_VALUE,
-    onTextLayout: (TextLayoutResult) -> Unit = {},
-    style: TextStyle = LocalTextStyle.current,
-) {
-    AutoSizeText(
-        AnnotatedString(text),
-        modifier,
-        color,
-        suggestedFontSizes,
-        fontStyle,
-        fontWeight,
-        fontFamily,
-        letterSpacing,
-        textDecoration,
-        textAlign,
-        lineHeight,
-        overflow,
-        softWrap,
-        maxLines,
-        emptyMap(),
-        onTextLayout,
-        style,
-    )
-}
-
-@Composable
-fun AutoSizeText(
-    text: AnnotatedString,
-    modifier: Modifier = Modifier,
-    color: Color = Color.Unspecified,
-    suggestedFontSizes: List<TextUnit> = emptyList(),
-    fontStyle: FontStyle? = null,
-    fontWeight: FontWeight? = null,
-    fontFamily: FontFamily? = null,
-    letterSpacing: TextUnit = TextUnit.Unspecified,
-    textDecoration: TextDecoration? = null,
-    textAlign: TextAlign? = null,
-    lineHeight: TextUnit = TextUnit.Unspecified,
-    overflow: TextOverflow = TextOverflow.Clip,
-    softWrap: Boolean = true,
-    maxLines: Int = Int.MAX_VALUE,
-    inlineContent: Map<String, InlineTextContent> = mapOf(),
-    onTextLayout: (TextLayoutResult) -> Unit = {},
-    style: TextStyle = LocalTextStyle.current,
-) {
-    BoxWithConstraints(
-        modifier = modifier,
-        contentAlignment = Alignment.Center,
-    ) {
-        var combinedTextStyle = (LocalTextStyle.current + style).copy(
-            fontSize = min(maxWidth, maxHeight).value.sp
-        )
-
-        val fontSizes = suggestedFontSizes.ifEmpty {
-            MutableList(combinedTextStyle.fontSize.value.toInt()) {
-                (combinedTextStyle.fontSize.value - it).sp
-            }
-        }
-
-        var currentFontIndex = 0
-
-        while (shouldShrink(
-                text,
-                combinedTextStyle,
-                maxLines
-            ) && fontSizes.size > ++currentFontIndex
-        ) {
-            combinedTextStyle =
-                combinedTextStyle.copy(fontSize = fontSizes[currentFontIndex])
-        }
-
-        Text(
-            text,
-            Modifier,
-            color,
-            TextUnit.Unspecified,
-            fontStyle,
-            fontWeight,
-            fontFamily,
-            letterSpacing,
-            textDecoration,
-            textAlign,
-            lineHeight,
-            overflow,
-            softWrap,
-            maxLines,
-            inlineContent,
-            onTextLayout,
-            combinedTextStyle,
-        )
-    }
-}
-
-@OptIn(InternalFoundationTextApi::class)
-@Composable
-private fun BoxWithConstraintsScope.shouldShrink(
-    text: AnnotatedString,
-    textStyle: TextStyle,
-    maxLines: Int
-): Boolean {
-    val textDelegate = TextDelegate(
-        text,
-        textStyle,
-        maxLines,
-        true,
-        TextOverflow.Clip,
-        LocalDensity.current,
-        LocalFontFamilyResolver.current,
-    )
-
-    val textLayoutResult = textDelegate.layout(
-        constraints,
-        LocalLayoutDirection.current,
-    )
-
-    return textLayoutResult.hasVisualOverflow
 }
 
 class HomeViewModelFactory(private val recipeDataSource: RecipeRemoteDataSource) :
