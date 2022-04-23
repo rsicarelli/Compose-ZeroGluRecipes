@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.serialization.Contextual
@@ -34,6 +35,12 @@ class RecipeRemoteDataSource {
 
     private val _tags = MutableStateFlow(emptyList<Tag>())
     val tags: SharedFlow<List<Tag>> = _tags.asSharedFlow()
+
+    init {
+        scope.launch {
+            init().collect()
+        }
+    }
 
     suspend fun init(): Flow<Unit> {
         return callbackFlow {
@@ -94,6 +101,21 @@ class RecipeRemoteDataSource {
                 tagsSnapshotListener.remove()
             }
         }
+    }
+
+    companion object {
+        private lateinit var recipeRemoteDataSource: RecipeRemoteDataSource
+
+        fun init(): RecipeRemoteDataSource =
+            RecipeRemoteDataSource().also { recipeRemoteDataSource = it }
+
+        val instance: RecipeRemoteDataSource
+            get() {
+                if (!(::recipeRemoteDataSource.isInitialized)) {
+                    error("oops")
+                }
+                return recipeRemoteDataSource
+            }
     }
 }
 

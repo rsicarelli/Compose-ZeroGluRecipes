@@ -14,7 +14,7 @@
         android:theme="@style/Theme.ZeroGluRecipes"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".presentation.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.ZeroGluRecipes">
@@ -24,6 +24,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="com.rsicarelli.zeroglu_recipes.data.RecipeInitializer"
+                android:value="androidx.startup" />
+        </provider>
     </application>
 
 </manifest>

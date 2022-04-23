@@ -1,4 +1,4 @@
-package com.rsicarelli.zeroglu_recipes
+package com.rsicarelli.zeroglu_recipes.presentation
 
 import android.os.Build
 import android.os.Bundle
@@ -11,7 +11,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.ramcosta.composedestinations.DestinationsNavHost
-import com.rsicarelli.zeroglu_recipes.feature.NavGraphs
 import com.rsicarelli.zeroglu_recipes.ui.theme.AppTheme
 import com.rsicarelli.zeroglu_recipes.ui.theme.HarmonizedTheme
 

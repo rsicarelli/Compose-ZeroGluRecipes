@@ -1,6 +1,5 @@
-package com.rsicarelli.zeroglu_recipes.feature.home
+package com.rsicarelli.zeroglu_recipes.presentation.home
 
-import android.system.Os.remove
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rsicarelli.zeroglu_recipes.data.RecipeRemoteDataSource
@@ -18,10 +17,6 @@ import kotlinx.coroutines.launch
 class HomeViewModel(
     recipeRemoteDataSource: RecipeRemoteDataSource
 ) : ViewModel() {
-
-    init {
-        viewModelScope.launch { recipeRemoteDataSource.init().collect() }
-    }
 
     private val _selectedTags = MutableStateFlow(setOf<Tag>())
     val selectedTags: StateFlow<Set<Tag>> = _selectedTags.asStateFlow()

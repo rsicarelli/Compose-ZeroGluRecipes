@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.rsicarelli.zeroglu_recipes.feature.home
+package com.rsicarelli.zeroglu_recipes.presentation.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -30,14 +30,14 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.rsicarelli.zeroglu_recipes.data.RecipeRemoteDataSource
 import com.rsicarelli.zeroglu_recipes.domain.model.Recipe
 import com.rsicarelli.zeroglu_recipes.domain.model.Tag
-import com.rsicarelli.zeroglu_recipes.feature.destinations.RecipeDetailScreenDestination
-import com.rsicarelli.zeroglu_recipes.feature.home.components.ChipGroup
+import com.rsicarelli.zeroglu_recipes.presentation.destinations.RecipeDetailScreenDestination
+import com.rsicarelli.zeroglu_recipes.presentation.home.components.ChipGroup
 
 @Destination(start = true)
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = viewModel(
-        factory = HomeViewModelFactory(RecipeRemoteDataSource())
+        factory = HomeViewModelFactory(RecipeRemoteDataSource.instance)
     ),
     navigator: DestinationsNavigator
 ) {
