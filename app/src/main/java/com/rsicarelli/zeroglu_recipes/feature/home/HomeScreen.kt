@@ -51,7 +51,10 @@ fun HomeScreen(
         contentPadding = PaddingValues(8.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         content = {
-            items(state.size) {
+            items(
+                count = state.size,
+                key = { state[it].index }
+            ) {
                 val recipe = state[it]
                 Card(
                     onClick = { navigator.navigate(RecipeDetailScreenDestination(recipe)) },
