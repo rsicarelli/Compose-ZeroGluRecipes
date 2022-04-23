@@ -59,6 +59,7 @@ fun HomeScreen(
             }
             items(
                 count = recipes.size,
+                key = { recipes[it].index }
             ) {
                 val recipe = recipes[it]
                 Card(
