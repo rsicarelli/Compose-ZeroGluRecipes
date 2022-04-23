@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.callbackFlow
 class RecipeRemoteDataSource {
     private val firestore = Firebase.firestore
 
-
     private val _recipes = MutableStateFlow(emptyList<Recipe>())
     val recipes: SharedFlow<List<Recipe>> = _recipes.asSharedFlow()
 
@@ -22,9 +21,12 @@ class RecipeRemoteDataSource {
             val collection = firestore.collection("ZeroGlu-Pro")
             val snapshotListener = collection.addSnapshotListener { value, error ->
                 if (error == null) {
-                    val list = value?.toObjects(Recipe::class.java)?.toList()
-                        ?.filter { it.title.isNotBlank() } ?: emptyList()
-                    _recipes.value = list.map { it.copy() }
+                    val list = value?.toObjects(Recipe::class.java)
+                        ?.toList()
+                        ?.filter { it.title.isNotBlank() }
+                        ?.sortedBy { it.index }
+                        ?: emptyList()
+                    _recipes.tryEmit(list)
                 }
             }
 

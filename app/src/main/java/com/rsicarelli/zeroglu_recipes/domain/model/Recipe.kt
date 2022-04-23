@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Recipe(
-    val id: String = "",
+    val index: Int,
     val title: String,
     @SerialName("total_time_millis")
     val totalTimeMillis: Long?,
@@ -15,7 +15,7 @@ data class Recipe(
     val instructions: List<Instruction>,
     val language: String
 ) {
-    constructor() : this("", "", 0L, emptyList(), emptyList(), emptyList(), "")
+    constructor() : this(0, "", 0L, emptyList(), emptyList(), emptyList(), "")
 }
 
 @Serializable

@@ -49,7 +49,7 @@ fun HomeScreen(
 
     LazyColumn(
         contentPadding = PaddingValues(8.dp),
-        verticalArrangement = Arrangement.spacedBy(24.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
         content = {
             items(state.size) {
                 val recipe = state[it]
@@ -63,9 +63,8 @@ fun HomeScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(start = 24.dp, top = 16.dp, bottom = 16.dp, end = 16.dp),
-                        text = recipe.title,
+                        text = "${recipe.index}. ${recipe.title}",
                         fontSize = 16.sp,
-                        textAlign = TextAlign.Center,
                     )
                 }
             }
