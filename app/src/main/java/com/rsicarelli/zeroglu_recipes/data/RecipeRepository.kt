@@ -49,29 +49,24 @@ class RecipeRemoteDataSource {
             val collection = firestore.collection("ZeroGlu-Pro")
             val snapshotListener = collection.addSnapshotListener { value, error ->
                 if (error == null) {
-                    val list = value?.toObjects(Recipe::class.java)
-                        ?.asSequence()
-                        ?.filter { it.title.isNotBlank() }
-                        ?.sortedBy { it.index }
-                        ?.toList()
-                        ?: emptyList()
+                    scope.launch {
+                        val list = value?.toObjects(Recipe::class.java)
+                            ?.asSequence()
+                            ?.filter { it.title.isNotBlank() }
+                            ?.sortedBy { it.index }
+                            ?.toList()
+                            ?.map { recipe ->
+                                scope.async {
+                                    Pair(recipe, (recipe.tags as List<DocumentReference>)
+                                        .map { scope.async { it.get().await() } }
+                                        .awaitAll()
+                                        .map { it.toObject(Tag::class.java) })
+                                }
+                            }?.awaitAll()
+                            ?.map { it.first.copy(tags = it.second as List<Any>) }
+                            ?: emptyList()
 
-
-                    if (list.isNotEmpty()) {
-                        val tags = list.map { recipe ->
-                            scope.launch {
-                                (recipe.tags as List<DocumentReference>)
-                                    .map { scope.async { it.get().await() } }
-                                    .awaitAll()
-                                    .map { it.toObject(Tag::class.java) as Any }
-                            }
-                        }
-
-                        scope.launch {
-                            tags.joinAll()
-                            list.map { it.copy(tags = tags) }
-                            _recipes.tryEmit(list)
-                        }
+                        _recipes.tryEmit(list)
                     }
                 }
             }
