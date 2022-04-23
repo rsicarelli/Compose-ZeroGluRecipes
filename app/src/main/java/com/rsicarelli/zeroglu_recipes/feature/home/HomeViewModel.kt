@@ -27,14 +27,9 @@ class HomeViewModel(
     val selectedTags: StateFlow<Set<Tag>> = _selectedTags.asStateFlow()
 
     val recipes: StateFlow<List<Recipe>> =
-        combine(
-            recipeRemoteDataSource.recipes,
-            selectedTags
-        ) { recipes, selectedTags ->
+        combine(recipeRemoteDataSource.recipes, selectedTags) { recipes, selectedTags ->
             if (selectedTags.isNotEmpty()) {
-                recipes.filter {
-                    (it.tags).containsAll(selectedTags)
-                }
+                recipes.filter { it.tags.containsAll(selectedTags) }
             } else {
                 recipes
             }

@@ -26,7 +26,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 class RecipeRemoteDataSource {
-    private val firestore = Firebase.firestore
 
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
@@ -38,7 +37,9 @@ class RecipeRemoteDataSource {
 
     suspend fun init(): Flow<Unit> {
         return callbackFlow {
-            val tagsCollection = firestore.collection("Tags")
+            val recipesCollection = Firebase.firestore.collection("ZeroGlu-Pro")
+            val tagsCollection = Firebase.firestore.collection("Tags")
+
             val tagsSnapshotListener = tagsCollection.addSnapshotListener { value, error ->
                 if (error == null) {
                     val list = value?.toObjects(Tag::class.java)
@@ -48,8 +49,7 @@ class RecipeRemoteDataSource {
                 }
             }
 
-            val collection = firestore.collection("ZeroGlu-Pro")
-            val snapshotListener = collection.addSnapshotListener { value, error ->
+            val snapshotListener = recipesCollection.addSnapshotListener { value, error ->
                 if (error == null) {
                     scope.launch {
                         val list = value?.toObjects(RecipeDto::class.java)
@@ -59,10 +59,13 @@ class RecipeRemoteDataSource {
                             ?.toList()
                             ?.map { recipe ->
                                 scope.async {
-                                    Pair(recipe, (recipe.tags as List<DocumentReference>)
-                                        .map { scope.async { it.get().await() } }
-                                        .awaitAll()
-                                        .mapNotNull { it.toObject(Tag::class.java) })
+                                    Pair(
+                                        recipe,
+                                        recipe.tags
+                                            .map { scope.async { it.get().await() } }
+                                            .awaitAll()
+                                            .mapNotNull { it.toObject(Tag::class.java) }
+                                    )
                                 }
                             }?.awaitAll()
                             ?.map {
