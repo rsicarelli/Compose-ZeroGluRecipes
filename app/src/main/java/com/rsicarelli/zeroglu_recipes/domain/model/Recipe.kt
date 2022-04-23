@@ -9,13 +9,12 @@ import kotlinx.serialization.Serializable
 data class Recipe(
     val index: Int,
     val title: String,
-    @SerialName("total_time_millis")
     val totalTimeMillis: Long?,
     val setup: List<Setup>,
     val ingredients: List<Ingredient>,
     val instructions: List<Instruction>,
     val language: String,
-    val tags: List<@Contextual Any>,
+    val tags: List<Tag>,
 ) {
     constructor() : this(0, "", 0L, emptyList(), emptyList(), emptyList(), "", emptyList())
 }
@@ -44,4 +43,13 @@ data class Setup(
     val programme: Long? = null
 ) {
     constructor() : this(null, emptyList(), "", 0L)
+}
+
+
+@Serializable
+data class Tag(
+    val id: String,
+    val description: Map<String, String>
+) {
+    constructor() : this("", mapOf())
 }

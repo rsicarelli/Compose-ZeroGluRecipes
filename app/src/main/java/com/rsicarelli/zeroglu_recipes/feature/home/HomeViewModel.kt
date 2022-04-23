@@ -1,10 +1,11 @@
 package com.rsicarelli.zeroglu_recipes.feature.home
 
+import android.system.Os.remove
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rsicarelli.zeroglu_recipes.data.RecipeRemoteDataSource
-import com.rsicarelli.zeroglu_recipes.data.Tag
 import com.rsicarelli.zeroglu_recipes.domain.model.Recipe
+import com.rsicarelli.zeroglu_recipes.domain.model.Tag
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -32,7 +33,7 @@ class HomeViewModel(
         ) { recipes, selectedTags ->
             if (selectedTags.isNotEmpty()) {
                 recipes.filter {
-                    (it.tags as List<Tag>).containsAll(selectedTags)
+                    (it.tags).containsAll(selectedTags)
                 }
             } else {
                 recipes

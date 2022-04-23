@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,7 +30,7 @@ import androidx.compose.ui.unit.dp
 fun <T> ChipGroup(
     modifier: Modifier,
     items: List<T>,
-    selectedCar: List<T> = listOf(),
+    selectedItems: List<T> = listOf(),
     chipName: (T) -> String,
     onSelectedChanged: (T) -> Unit = {},
 ) {
@@ -39,7 +40,7 @@ fun <T> ChipGroup(
                 val item = items[it]
                 Chip(
                     name = chipName(item),
-                    isSelected = selectedCar.contains(item),
+                    isSelected = selectedItems.contains(item),
                     onSelectionChanged = {
                         onSelectedChanged(item)
                     },

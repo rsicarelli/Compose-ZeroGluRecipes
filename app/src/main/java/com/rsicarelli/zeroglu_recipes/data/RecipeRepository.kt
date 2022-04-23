@@ -3,7 +3,11 @@ package com.rsicarelli.zeroglu_recipes.data
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.rsicarelli.zeroglu_recipes.domain.model.Ingredient
+import com.rsicarelli.zeroglu_recipes.domain.model.Instruction
 import com.rsicarelli.zeroglu_recipes.domain.model.Recipe
+import com.rsicarelli.zeroglu_recipes.domain.model.Setup
+import com.rsicarelli.zeroglu_recipes.domain.model.Tag
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -17,6 +21,8 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 class RecipeRemoteDataSource {
@@ -46,7 +52,7 @@ class RecipeRemoteDataSource {
             val snapshotListener = collection.addSnapshotListener { value, error ->
                 if (error == null) {
                     scope.launch {
-                        val list = value?.toObjects(Recipe::class.java)
+                        val list = value?.toObjects(RecipeDto::class.java)
                             ?.asSequence()
                             ?.filter { it.title.isNotBlank() }
                             ?.sortedBy { it.index }
@@ -56,10 +62,23 @@ class RecipeRemoteDataSource {
                                     Pair(recipe, (recipe.tags as List<DocumentReference>)
                                         .map { scope.async { it.get().await() } }
                                         .awaitAll()
-                                        .map { it.toObject(Tag::class.java) })
+                                        .mapNotNull { it.toObject(Tag::class.java) })
                                 }
                             }?.awaitAll()
-                            ?.map { it.first.copy(tags = it.second as List<Any>) }
+                            ?.map {
+                                with(it.first) {
+                                    Recipe(
+                                        index = index,
+                                        title = title,
+                                        totalTimeMillis = totalTimeMillis,
+                                        setup = setup,
+                                        ingredients = ingredients,
+                                        instructions = instructions,
+                                        language = language,
+                                        tags = it.second
+                                    )
+                                }
+                            }
                             ?: emptyList()
 
                         _recipes.tryEmit(list)
@@ -76,9 +95,16 @@ class RecipeRemoteDataSource {
 }
 
 @Serializable
-data class Tag(
-    val id: String,
-    val description: Map<String, String>
+data class RecipeDto(
+    val index: Int,
+    val title: String,
+    @SerialName("total_time_millis")
+    val totalTimeMillis: Long?,
+    val setup: List<Setup>,
+    val ingredients: List<Ingredient>,
+    val instructions: List<Instruction>,
+    val language: String,
+    val tags: List<@Contextual DocumentReference>,
 ) {
-    constructor() : this("", mapOf())
+    constructor() : this(0, "", 0L, emptyList(), emptyList(), emptyList(), "", emptyList())
 }

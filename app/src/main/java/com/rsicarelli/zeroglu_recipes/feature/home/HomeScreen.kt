@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.rsicarelli.zeroglu_recipes.feature.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -26,8 +28,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.rsicarelli.zeroglu_recipes.data.RecipeRemoteDataSource
-import com.rsicarelli.zeroglu_recipes.data.Tag
 import com.rsicarelli.zeroglu_recipes.domain.model.Recipe
+import com.rsicarelli.zeroglu_recipes.domain.model.Tag
 import com.rsicarelli.zeroglu_recipes.feature.destinations.RecipeDetailScreenDestination
 import com.rsicarelli.zeroglu_recipes.feature.home.components.ChipGroup
 
@@ -82,14 +84,13 @@ private fun Header(
         ChipGroup(
             modifier = Modifier.background(MaterialTheme.colorScheme.surface),
             items = tags,
-            selectedCar = selectedTags.toList(),
+            selectedItems = selectedTags.toList(),
             onSelectedChanged = { viewModel.onTagSelected(it) },
             chipName = { it.description["en"] ?: "" }
         )
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun RecipeItem(
     recipes: List<Recipe>,
