@@ -1,5 +1,6 @@
 package com.rsicarelli.zeroglu_recipes.feature.home
 
+import android.system.Os.remove
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rsicarelli.zeroglu_recipes.data.RecipeRemoteDataSource
@@ -10,6 +11,9 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -21,15 +25,24 @@ class HomeViewModel(
         viewModelScope.launch { recipeRemoteDataSource.init().collect() }
     }
 
-
     private val _selectedTags = MutableStateFlow(setOf<Tag>())
     val selectedTags: StateFlow<Set<Tag>> = _selectedTags.asStateFlow()
 
-    val recipes: StateFlow<List<Recipe>> = recipeRemoteDataSource.recipes.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(5000),
-        emptyList()
-    )
+    val recipes: StateFlow<List<Recipe>> =
+        combine(
+            recipeRemoteDataSource.recipes,
+            selectedTags
+        ) { recipes, selectedTags ->
+            if (selectedTags.isNotEmpty()) {
+                recipes.filter { it.tags.any { selectedTags.contains(it) } }
+            } else {
+                recipes
+            }
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            emptyList()
+        )
 
     val tags: StateFlow<List<Tag>> = recipeRemoteDataSource.tags.stateIn(
         viewModelScope,
@@ -38,6 +51,16 @@ class HomeViewModel(
     )
 
     fun onTagSelected(tag: Tag) {
+//
+//        recipes.filter {
+//            it.any {
+//                (it.tags as List<Tag>).any { tag ->
+//                    _selectedTags.value.contains(tag)
+//                }
+//            }
+//        }
+//
+
         val list = if (_selectedTags.value.contains(tag)) {
             _selectedTags.value.toMutableSet().apply { remove(tag) }
         } else {

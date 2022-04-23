@@ -1,5 +1,6 @@
 package com.rsicarelli.zeroglu_recipes.data
 
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.rsicarelli.zeroglu_recipes.domain.model.Recipe
@@ -9,6 +10,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 
 class RecipeRemoteDataSource {
@@ -27,8 +31,26 @@ class RecipeRemoteDataSource {
                 if (error == null) {
                     val list = value?.toObjects(Recipe::class.java)
                         ?.toList()
+                        ?.asSequence()
                         ?.filter { it.title.isNotBlank() }
                         ?.sortedBy { it.index }
+                        ?.map { recipe ->
+                            runCatching {
+                                runBlocking {
+                                    recipe.copy(
+                                        tags = withContext(this.coroutineContext) {
+                                            (recipe.tags as List<DocumentReference>)
+                                                .map {
+                                                    it.get().await()
+                                                        .toObject(Tag::class.java) as Any
+                                                }
+                                        }
+                                    )
+                                }
+                            }.onFailure { println("ERROR -> ${recipe.title}") }
+                                .getOrElse { recipe }
+                        }
+                        ?.toList()
                         ?: emptyList()
                     _recipes.tryEmit(list)
                 }
@@ -54,7 +76,8 @@ class RecipeRemoteDataSource {
 
 @Serializable
 data class Tag(
+    val id: String,
     val description: Map<String, String>
 ) {
-    constructor() : this(mapOf())
+    constructor() : this("", mapOf())
 }

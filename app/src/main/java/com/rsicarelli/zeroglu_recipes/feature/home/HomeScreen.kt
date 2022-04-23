@@ -59,13 +59,12 @@ fun HomeScreen(
             }
             items(
                 count = recipes.size,
-                key = { recipes[it].index }
             ) {
                 val recipe = recipes[it]
                 Card(
                     onClick = { navigator.navigate(RecipeDetailScreenDestination(recipe)) },
                     modifier = Modifier.fillMaxWidth(),
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+//                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
                     shape = RoundedCornerShape(32.dp)
                 ) {
                     Text(

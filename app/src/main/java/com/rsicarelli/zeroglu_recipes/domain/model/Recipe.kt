@@ -1,5 +1,6 @@
 package com.rsicarelli.zeroglu_recipes.domain.model
 
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -13,9 +14,10 @@ data class Recipe(
     val setup: List<Setup>,
     val ingredients: List<Ingredient>,
     val instructions: List<Instruction>,
-    val language: String
+    val language: String,
+    val tags: List<@Contextual Any>,
 ) {
-    constructor() : this(0, "", 0L, emptyList(), emptyList(), emptyList(), "")
+    constructor() : this(0, "", 0L, emptyList(), emptyList(), emptyList(), "", emptyList())
 }
 
 @Serializable
