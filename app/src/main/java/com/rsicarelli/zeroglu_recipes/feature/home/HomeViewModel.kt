@@ -34,7 +34,9 @@ class HomeViewModel(
             selectedTags
         ) { recipes, selectedTags ->
             if (selectedTags.isNotEmpty()) {
-                recipes.filter { it.tags.any { selectedTags.contains(it) } }
+                recipes.filter {
+                    (it.tags as List<Tag>).containsAll(selectedTags)
+                }
             } else {
                 recipes
             }
