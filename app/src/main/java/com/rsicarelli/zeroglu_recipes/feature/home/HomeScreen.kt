@@ -3,6 +3,7 @@ package com.rsicarelli.zeroglu_recipes.feature.home
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -59,13 +60,7 @@ private fun Content(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         content = {
             stickyHeader {
-                ChipGroup(
-                    modifier = Modifier.background(MaterialTheme.colorScheme.surface),
-                    items = tags,
-                    selectedCar = selectedTags.toList(),
-                    onSelectedChanged = { viewModel.onTagSelected(it) },
-                    chipName = { it.description.getOrDefault("en", "aaa") }
-                )
+                Header(tags, selectedTags, viewModel)
             }
 
             items(
@@ -75,6 +70,23 @@ private fun Content(
                 RecipeItem(recipes, it, navigator)
             }
         })
+}
+
+@Composable
+private fun Header(
+    tags: List<Tag>,
+    selectedTags: Set<Tag>,
+    viewModel: HomeViewModel
+) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        ChipGroup(
+            modifier = Modifier.background(MaterialTheme.colorScheme.surface),
+            items = tags,
+            selectedCar = selectedTags.toList(),
+            onSelectedChanged = { viewModel.onTagSelected(it) },
+            chipName = { it.description["en"] ?: "" }
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
