@@ -42,7 +42,7 @@ class RecipeRemoteDataSource {
         }
     }
 
-    suspend fun init(): Flow<Unit> {
+    private suspend fun init(): Flow<Unit> {
         return callbackFlow {
             val recipesCollection = Firebase.firestore.collection("ZeroGlu-Pro")
             val tagsCollection = Firebase.firestore.collection("Tags")
