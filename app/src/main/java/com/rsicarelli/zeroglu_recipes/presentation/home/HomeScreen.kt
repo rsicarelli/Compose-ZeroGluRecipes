@@ -39,6 +39,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.rsicarelli.zeroglu_recipes.data.RecipeRemoteDataSource
 import com.rsicarelli.zeroglu_recipes.domain.model.Recipe
@@ -46,13 +47,14 @@ import com.rsicarelli.zeroglu_recipes.domain.model.Tag
 import com.rsicarelli.zeroglu_recipes.presentation.destinations.RecipeDetailScreenDestination
 import com.rsicarelli.zeroglu_recipes.presentation.home.components.ChipGroup
 
-@Destination(start = true)
+@RootNavGraph(start = true)
+@Destination
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = viewModel(
         factory = HomeViewModelFactory(RecipeRemoteDataSource.instance)
     ),
-    navigator: DestinationsNavigator
+    navigator: DestinationsNavigator,
 ) {
     val recipes by viewModel.recipes.collectAsState()
     val tags by viewModel.tags.collectAsState()
@@ -68,7 +70,7 @@ private fun Content(
     selectedTags: Set<Tag>,
     viewModel: HomeViewModel,
     recipes: List<Recipe>,
-    navigator: DestinationsNavigator
+    navigator: DestinationsNavigator,
 ) {
     LazyColumn(
         contentPadding = PaddingValues(8.dp),
@@ -97,7 +99,7 @@ private fun Content(
 private fun Header(
     tags: List<Tag>,
     selectedTags: Set<Tag>,
-    viewModel: HomeViewModel
+    viewModel: HomeViewModel,
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         ChipGroup(
@@ -133,9 +135,9 @@ private fun RecipeItem(
             val tags = derivedStateOf {
                 recipe.tags.filterNot {
                     it.description.containsValue("Loaf") ||
-                            it.description.containsValue("Pizza") ||
-                            it.description.containsValue("Ciabatta") ||
-                            it.description.containsValue("Roll")
+                        it.description.containsValue("Pizza") ||
+                        it.description.containsValue("Ciabatta") ||
+                        it.description.containsValue("Roll")
                 }
             }
 
@@ -174,7 +176,7 @@ private fun RecipeItem(
 @Composable
 private fun ConstraintLayoutScope.IndexTitle(
     indexRef: ConstrainedLayoutReference,
-    index: String
+    index: String,
 ) {
     Box(contentAlignment = Alignment.Center,
         modifier = Modifier
@@ -234,7 +236,8 @@ private fun RecipeItemChip(tag: String) {
 
 class HomeViewModelFactory(private val recipeDataSource: RecipeRemoteDataSource) :
     ViewModelProvider.Factory {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
             return HomeViewModel(recipeDataSource) as T
         }
