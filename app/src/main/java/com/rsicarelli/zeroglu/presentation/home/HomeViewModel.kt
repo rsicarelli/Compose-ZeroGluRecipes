@@ -20,7 +20,9 @@ import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.withContext
 
 @Stable
-class HomeViewModel(recipeRemoteDataSource: RecipeRemoteDataSource) : ViewModel() {
+class HomeViewModel(
+    recipeRemoteDataSource: RecipeRemoteDataSource = RecipeRemoteDataSource.instance,
+) : ViewModel() {
 
     private val selectedTagItems = MutableStateFlow<Sequence<TagItem>>(emptySequence())
 
