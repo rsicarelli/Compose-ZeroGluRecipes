@@ -62,6 +62,7 @@ dependencies {
     implementation(libs.androidx.startup.runtime)
     implementation(libs.androidx.core)
     implementation(libs.androidx.lifecycle.viewmodel)
+    implementation(libs.google.material)
 
     implementation(libs.bundles.compose)
     debugImplementation(libs.bundles.composeDebug)
@@ -69,9 +70,7 @@ dependencies {
     implementation(libs.compose.destinations.animations)
     ksp(libs.compose.destinations.ksp)
 
-    implementation(libs.kotlin.coroutines.play.services)
-    implementation(libs.google.material)
-
     implementation(libs.firebase.firestore.ktx)
+    implementation(libs.kotlin.coroutines.play.services)
     implementation(libs.kotlin.serialization.json)
 }
