@@ -6,14 +6,13 @@ import com.rsicarelli.zeroglu.domain.model.Instruction
 import com.rsicarelli.zeroglu.domain.model.Recipe
 import com.rsicarelli.zeroglu.domain.model.Setup
 import com.rsicarelli.zeroglu.domain.model.Tag
-import com.rsicarelli.zeroglu.ui.ComposeLazyList
 import kotlinx.serialization.Serializable
 
 //region HomeState
 @Immutable
 data class HomeState(
-    val recipeItems: ComposeLazyList<RecipeItem> = hashMapOf(),
-    val tags: ComposeLazyList<TagItem> = hashMapOf(),
+    val recipeItems: List<RecipeItem> = listOf(),
+    val tags: List<TagItem> = listOf(),
     val selectedTags: Sequence<TagItem> = emptySequence(),
     val errorItem: ErrorItem? = null,
 )
@@ -27,25 +26,12 @@ object UnknownError : ErrorItem
 //region RecipeItem
 internal
 
-fun List<Recipe>.toRecipeItems(selectedTags: Sequence<TagItem>): ComposeLazyList<RecipeItem> {
-    val tagsItem = mutableMapOf<Long, RecipeItem>()
+fun List<Recipe>.toRecipeItems(selectedTags: Sequence<TagItem>): List<RecipeItem> {
 
-
-    asSequence()
-        .filter {
-            if (selectedTags.count() > 0) {
-                it.tags.any { tag ->
-                    selectedTags.any { tagItem ->
-                        tagItem.id == tag.id
-                    }
-                }
-            } else {
-                true
-            }
-        }
-        .forEachIndexed { _, recipe ->
+    return asSequence()
+        .map { recipe ->
             with(recipe) {
-                tagsItem[index.toLong()] = RecipeItem(
+                RecipeItem(
                     index = index,
                     title = title,
                     totalTimeMillis = totalTimeMillis,
@@ -57,7 +43,8 @@ fun List<Recipe>.toRecipeItems(selectedTags: Sequence<TagItem>): ComposeLazyList
                 )
             }
         }
-    return tagsItem
+        .filter { it.tags.containsAll(selectedTags.toList()) }
+        .toList()
 }
 
 @Immutable
@@ -70,7 +57,7 @@ data class RecipeItem(
     val ingredients: List<IngredientItem>,
     val instructions: List<InstructionItem>,
     val language: String,
-    val tags: ComposeLazyList<TagItem>,
+    val tags: List<TagItem>,
 )
 //endregion
 
@@ -90,15 +77,14 @@ value class IngredientItem(val value: Pair<String, String>)
 //endregion
 
 //region TagItem
-internal fun List<Tag>.toTagsItem(language: String = "en"): ComposeLazyList<TagItem> {
-    val tagsItem = mutableMapOf<Long, TagItem>()
-
-    asSequence().forEachIndexed { index, (id, is_internal, description) ->
-        tagsItem[index.toLong()] = TagItem(id, is_internal, requireNotNull(description[language]))
-    }
-
-    return tagsItem.toMap()
-}
+internal fun List<Tag>.toTagsItem(language: String = "en"): List<TagItem> =
+    asSequence().map {
+        TagItem(
+            id = it.id,
+            isInternal = it.is_internal,
+            description = it.description["en"] ?: ""
+        )
+    }.toList()
 
 
 typealias TagDescription = String

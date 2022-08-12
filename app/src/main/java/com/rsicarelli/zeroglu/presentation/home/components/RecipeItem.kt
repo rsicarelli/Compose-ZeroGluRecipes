@@ -67,7 +67,7 @@ private fun RecipeItemContent(
                 horizontalArrangement = DefaultArrangement
             ) {
                 items(
-                    items = recipe.tags.values.toList(),
+                    items = recipe.tags,
                     key = TagItem::id
                 ) { tagItem ->
                     RecipeItemChip(
@@ -109,7 +109,7 @@ private object RecipeItemDefaults {
     val HorizontalPadding = 24.dp
 
     @Stable
-    val VerticalPadding = 16.dp
+    val VerticalPadding = 24.dp
 
     @Stable
     val DefaultArrangement = Arrangement.spacedBy(8.dp)

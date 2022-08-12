@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -24,7 +25,6 @@ import com.rsicarelli.zeroglu.presentation.home.HomeContentDefaults.DefaultConte
 import com.rsicarelli.zeroglu.presentation.home.HomeContentDefaults.DefaultVerticalArrangement
 import com.rsicarelli.zeroglu.presentation.home.components.RecipeItem
 import com.rsicarelli.zeroglu.presentation.home.components.TagsStickyHeader
-import com.rsicarelli.zeroglu.ui.ComposeLazyList
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
 @RootNavGraph(start = true)
@@ -40,25 +40,21 @@ fun HomeScreen(
         { navigator.navigate(RecipeDetailScreenDestination(it)) }
     }
 
-    if (state.recipeItems.isNotEmpty()) {
-        HomeContent(
-            tags = state.tags,
-            selectedTags = state.selectedTags,
-            recipes = state.recipeItems,
-            onTagSelected = viewModel::onTagSelected,
-            onRecipeSelected = onRecipeSelected
-        )
-    } else {
-        //show empty state
-    }
+    HomeContent(
+        tags = state.tags,
+        selectedTags = state.selectedTags,
+        recipes = state.recipeItems,
+        onTagSelected = viewModel::onTagSelected,
+        onRecipeSelected = onRecipeSelected
+    )
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun HomeContent(
-    tags: ComposeLazyList<TagItem>,
+    tags: List<TagItem>,
     selectedTags: Sequence<TagItem>,
-    recipes: ComposeLazyList<RecipeItem>,
+    recipes: List<RecipeItem>,
     onTagSelected: (TagItem) -> Unit,
     onRecipeSelected: (RecipeItem) -> Unit,
 ) {
@@ -74,19 +70,24 @@ private fun HomeContent(
                 )
             }
 
-            items(
-                items = recipes.values.toList(),
-                key = RecipeItem::index
-            ) { recipeItem ->
-                val onNavigateToDetail: () -> Unit = remember(recipeItem) {
-                    { onRecipeSelected(recipeItem) }
+            if (recipes.isEmpty()) {
+                item { Text(text = "Nothing here") }
+            } else {
+                items(
+                    items = recipes,
+                    key = RecipeItem::index
+                ) { recipeItem ->
+                    val onNavigateToDetail: () -> Unit = remember(recipeItem) {
+                        { onRecipeSelected(recipeItem) }
+                    }
+                    RecipeItem(
+                        modifier = Modifier.animateItemPlacement(),
+                        recipe = recipeItem,
+                        onNavigateToDetail = onNavigateToDetail
+                    )
                 }
-                RecipeItem(
-                    modifier = Modifier.animateItemPlacement(),
-                    recipe = recipeItem,
-                    onNavigateToDetail = onNavigateToDetail
-                )
             }
+
         },
     )
 }

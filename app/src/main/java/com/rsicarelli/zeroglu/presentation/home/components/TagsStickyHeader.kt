@@ -5,12 +5,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.rsicarelli.zeroglu.presentation.home.TagItem
-import com.rsicarelli.zeroglu.ui.ComposeLazyList
 
 @Composable
 internal fun TagsStickyHeader(
     modifier: Modifier = Modifier,
-    tags: ComposeLazyList<TagItem>,
+    tags: List<TagItem>,
     selectedTags: Sequence<TagItem>,
     onTagSelected: (TagItem) -> Unit,
 ) {
