@@ -1,5 +1,6 @@
 package com.rsicarelli.zeroglu.presentation.home.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,11 +13,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.rsicarelli.zeroglu.presentation.home.RecipeItem
 import com.rsicarelli.zeroglu.presentation.home.TagItem
@@ -38,12 +40,6 @@ private object RecipeItemDefaults {
 
     @Stable
     val CardShape = 32.dp
-
-    @Stable
-    val CardPadding = 16.dp
-
-    @Stable
-    val EndGuidelinePadding = 0.dp
 
     @Stable
     val HorizontalPadding = 24.dp
@@ -97,20 +93,20 @@ private fun RecipeItemContent(
 }
 
 @Composable
-private fun RecipeItemChip(tagName: String) {
+private fun RecipeItemChip(
+    modifier: Modifier = Modifier,
+    verticalPadding: Dp = 8.dp,
+    horizontalPadding: Dp = 12.dp,
+    tagName: String,
+    borderStroke: BorderStroke = BorderStroke(1.dp, colorScheme.onSurface.copy(alpha = 0.15F)),
+) {
     Box(
-        modifier = Modifier
-            .border(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.onSurface.copy(
-                    alpha = 0.15F
-                ),
-                shape = MaterialTheme.shapes.large
-            )
-            .clip(MaterialTheme.shapes.large),
+        modifier = modifier.border(borderStroke, MaterialTheme.shapes.extraLarge),
     ) {
         Text(
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier
+                .padding(horizontal = horizontalPadding)
+                .then(Modifier.padding(vertical = verticalPadding)),
             text = tagName,
             style = MaterialTheme.typography.labelMedium
         )
