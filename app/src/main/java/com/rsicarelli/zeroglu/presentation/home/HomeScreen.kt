@@ -26,10 +26,10 @@ import com.rsicarelli.zeroglu.presentation.home.HomeContentDefaults.DefaultVerti
 import com.rsicarelli.zeroglu.presentation.home.components.RecipeItem
 import com.rsicarelli.zeroglu.presentation.home.components.TagsStickyHeader
 
-@OptIn(ExperimentalLifecycleComposeApi::class)
 @RootNavGraph(start = true)
 @Destination
 @Composable
+@OptIn(ExperimentalLifecycleComposeApi::class)
 fun HomeScreen(
     viewModel: HomeViewModel = remember(::HomeViewModel),
     navigator: DestinationsNavigator,
@@ -49,8 +49,8 @@ fun HomeScreen(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
+@OptIn(ExperimentalFoundationApi::class)
 private fun HomeContent(
     tags: List<TagItem>,
     selectedTags: Sequence<TagItem>,
