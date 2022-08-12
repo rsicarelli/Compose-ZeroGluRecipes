@@ -1,3 +1,5 @@
+val versionCatalog: VersionCatalog = extensions.getByType<VersionCatalogsExtension>().named("libs")
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -19,11 +21,15 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    @Suppress("UNUSED_VARIABLE")
     buildTypes {
-        named("release") {
+        val release by getting {
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
             isMinifyEnabled = true
             isShrinkResources = true
-            setProguardFiles(listOf(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"))
         }
     }
 
@@ -33,15 +39,23 @@ android {
     }
 
     kotlinOptions {
+        allWarningsAsErrors = properties["warningsAsErrors"] as? Boolean ?: false
+
+        freeCompilerArgs = freeCompilerArgs + listOf(
+            "-opt-in=kotlin.RequiresOptIn",
+            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+            "-opt-in=kotlinx.coroutines.FlowPreview",
+            "-opt-in=kotlin.Experimental",
+        )
+
         jvmTarget = "1.8"
     }
-
     buildFeatures {
         compose = true
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.2.0-rc02"
+        kotlinCompilerExtensionVersion = versionCatalog.version("compose")
     }
 
     packagingOptions {
@@ -75,3 +89,5 @@ dependencies {
     implementation(libs.kotlin.coroutines.play.services)
     implementation(libs.kotlin.serialization.json)
 }
+
+fun VersionCatalog.version(alias: String): String = findVersion(alias).get().toString()
