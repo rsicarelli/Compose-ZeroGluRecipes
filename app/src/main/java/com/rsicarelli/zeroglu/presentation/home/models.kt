@@ -7,6 +7,7 @@ import com.rsicarelli.zeroglu.domain.model.Recipe
 import com.rsicarelli.zeroglu.domain.model.Setup
 import com.rsicarelli.zeroglu.domain.model.Tag
 import com.rsicarelli.zeroglu.ui.ComposeLazyList
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 //region HomeState
@@ -53,22 +54,23 @@ data class RecipeItem(
     val index: Int,
     val title: String,
     val totalTimeMillis: Long?,
-    val setup: Sequence<SetupItem>,
-    val ingredients: Sequence<IngredientItem>,
-    val instructions: Sequence<InstructionItem>,
+    val setup: List<SetupItem>,
+    val ingredients: List<IngredientItem>,
+    val instructions: List<InstructionItem>,
     val language: String,
     val tags: ComposeLazyList<TagItem>,
 )
 //endregion
 
 //region IngredientItem
-private fun List<Ingredient>.toIngredientsItems(): Sequence<IngredientItem> =
+private fun List<Ingredient>.toIngredientsItems(): List<IngredientItem> =
     asSequence()
         .first()
         .items
         .asSequence()
         .map { it.splitToSequence(":") }
         .map { IngredientItem(Pair(it.first().trim(), it.last().trim())) }
+        .toList()
 
 @JvmInline
 @Serializable
@@ -99,29 +101,30 @@ data class TagItem(
 //endregion
 
 //region InstructionItem
-private fun List<Instruction>.toInstructionsItems(): Sequence<InstructionItem> =
+private fun List<Instruction>.toInstructionsItems(): List<InstructionItem> =
     asSequence()
         .filter { it.steps.isNotEmpty() }
-        .map { (title, steps) -> InstructionItem(title, steps.asSequence()) }
+        .map { (title, steps) -> InstructionItem(title, steps) }
+        .toList()
 
 @Immutable
 @Serializable
 data class InstructionItem(
     val title: String?,
-    val steps: Sequence<String>,
+    val steps: List<String>,
 )
 //endregion
 
 //region SetupItems
-private fun List<Setup>.toSetupItems(): Sequence<SetupItem> =
+private fun List<Setup>.toSetupItems(): List<SetupItem> =
     asSequence().map { (title, breadShapes, browningLevel, programme) ->
         SetupItem(
             title = title,
-            breadShapes = BreadShapes(breadShapes.asSequence()),
+            breadShapes = BreadShapes(breadShapes),
             browningLevel = BrowningLevel(browningLevel),
             programme = Programme(programme)
         )
-    }
+    }.toList()
 
 @Immutable
 @Serializable
@@ -134,7 +137,7 @@ data class SetupItem(
 
 @JvmInline
 @Serializable
-value class BreadShapes(val value: Sequence<String>)
+value class BreadShapes(val value: List<String>)
 
 @JvmInline
 @Serializable

@@ -60,19 +60,17 @@ private fun RecipeDetailContent(
 }
 
 @Composable
-private fun Instructions(instructionsItem: Sequence<InstructionItem>) {
+private fun Instructions(instructionsItem: List<InstructionItem>) {
     instructionsItem.forEachIndexed { index, instructionItems ->
         if (index > 0) {
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-        requireNotNull(instructionItems.title)
-
         Column {
             Text(
                 fontWeight = FontWeight.Medium,
-                fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
-                text = instructionItems.title,
+                fontStyle = FontStyle.Italic,
+                text = stringResource(id = R.string.instructions),
                 style = MaterialTheme.typography.titleLarge
             )
 
@@ -92,7 +90,7 @@ private fun Instructions(instructionsItem: Sequence<InstructionItem>) {
 
 @Composable
 private fun IngredientsContainer(
-    ingredients: Sequence<IngredientItem>,
+    ingredients: List<IngredientItem>,
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -142,7 +140,7 @@ private fun Title(recipe: String) {
 }
 
 @Composable
-private fun SettingsContainer(setupItems: Sequence<SetupItem>) {
+private fun SettingsContainer(setupItems: List<SetupItem>) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp)
