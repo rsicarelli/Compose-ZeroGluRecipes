@@ -7,7 +7,6 @@ import com.rsicarelli.zeroglu.domain.model.Recipe
 import com.rsicarelli.zeroglu.domain.model.Setup
 import com.rsicarelli.zeroglu.domain.model.Tag
 import com.rsicarelli.zeroglu.ui.ComposeLazyList
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 //region HomeState

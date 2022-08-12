@@ -48,7 +48,21 @@ class HomeViewModel(
         coroutineContext: CoroutineContext = Dispatchers.Default,
     ): HomeState = supervisorScope {
         HomeState(
-            recipeItems = withContext(coroutineContext) { recipeItems.toRecipeItems() },
+            recipeItems = withContext(coroutineContext) {
+                recipeItems
+                    .filter {
+                        if (selectedTags.count() > 0) {
+                            it.tags.any { tag ->
+                                selectedTags.any { tagItem ->
+                                    tagItem.id == tag.id
+                                }
+                            }
+                        } else {
+                            true
+                        }
+                    }
+                    .toRecipeItems()
+            },
             tags = withContext(coroutineContext) { tags.toTagsItem() },
             selectedTags = selectedTags,
         )
@@ -64,7 +78,9 @@ class HomeViewModel(
                     else add(tagItem)
                 }
                 .asSequence()
-                .let { selectedTagItems.value = it }
+                .let {
+                    selectedTagItems.value = it
+                }
         }
     }
 }

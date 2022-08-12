@@ -36,21 +36,6 @@ internal fun RecipeItem(
     recipe = recipe
 )
 
-private object RecipeItemDefaults {
-
-    @Stable
-    val CardShape = 32.dp
-
-    @Stable
-    val HorizontalPadding = 24.dp
-
-    @Stable
-    val VerticalPadding = 16.dp
-
-    @Stable
-    val DefaultArrangement = Arrangement.spacedBy(8.dp)
-}
-
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 private fun RecipeItemContent(
@@ -111,4 +96,19 @@ private fun RecipeItemChip(
             style = MaterialTheme.typography.labelMedium
         )
     }
+}
+
+private object RecipeItemDefaults {
+
+    @Stable
+    val CardShape = 32.dp
+
+    @Stable
+    val HorizontalPadding = 24.dp
+
+    @Stable
+    val VerticalPadding = 16.dp
+
+    @Stable
+    val DefaultArrangement = Arrangement.spacedBy(8.dp)
 }
