@@ -1,13 +1,13 @@
-package com.rsicarelli.zeroglu_recipes.data
+package com.rsicarelli.zeroglu.data
 
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.rsicarelli.zeroglu_recipes.domain.model.Ingredient
-import com.rsicarelli.zeroglu_recipes.domain.model.Instruction
-import com.rsicarelli.zeroglu_recipes.domain.model.Recipe
-import com.rsicarelli.zeroglu_recipes.domain.model.Setup
-import com.rsicarelli.zeroglu_recipes.domain.model.Tag
+import com.rsicarelli.zeroglu.domain.model.Ingredient
+import com.rsicarelli.zeroglu.domain.model.Instruction
+import com.rsicarelli.zeroglu.domain.model.Recipe
+import com.rsicarelli.zeroglu.domain.model.Setup
+import com.rsicarelli.zeroglu.domain.model.Tag
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

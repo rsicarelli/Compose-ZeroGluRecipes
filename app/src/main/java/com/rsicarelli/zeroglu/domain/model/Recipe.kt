@@ -1,4 +1,4 @@
-package com.rsicarelli.zeroglu_recipes.domain.model
+package com.rsicarelli.zeroglu.domain.model
 
 import kotlinx.serialization.Serializable
 import javax.annotation.concurrent.Immutable

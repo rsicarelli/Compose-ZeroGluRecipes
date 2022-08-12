@@ -1,4 +1,4 @@
-package com.rsicarelli.zeroglu_recipes.data
+package com.rsicarelli.zeroglu.data
 
 import android.content.Context
 import androidx.startup.Initializer

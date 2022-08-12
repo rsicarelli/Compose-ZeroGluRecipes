@@ -1,4 +1,4 @@
-package com.rsicarelli.zeroglu_recipes.presentation
+package com.rsicarelli.zeroglu.presentation
 
 import android.os.Build
 import android.os.Bundle
@@ -11,8 +11,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.ramcosta.composedestinations.DestinationsNavHost
-import com.rsicarelli.zeroglu_recipes.ui.theme.AppTheme
-import com.rsicarelli.zeroglu_recipes.ui.theme.HarmonizedTheme
+import com.rsicarelli.zeroglu.ui.theme.AppTheme
+import com.rsicarelli.zeroglu.ui.theme.HarmonizedTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

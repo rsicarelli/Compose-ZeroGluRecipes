@@ -1,4 +1,4 @@
-package com.rsicarelli.zeroglu_recipes
+package com.rsicarelli.zeroglu
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

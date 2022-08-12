@@ -1,4 +1,4 @@
-package com.rsicarelli.zeroglu_recipes.presentation.home.components
+package com.rsicarelli.zeroglu.presentation.home.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -17,29 +17,38 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.rsicarelli.zeroglu.presentation.home.ComposeLazyList
+import com.rsicarelli.zeroglu.presentation.home.TagItem
 
 @Composable
-fun <T> ChipGroup(
+fun ChipGroup(
     modifier: Modifier,
-    items: List<T>,
-    selectedItems: List<T> = listOf(),
-    chipName: (T) -> String,
-    onSelectedChanged: (T) -> Unit = {},
+    items: ComposeLazyList<TagItem>,
+    selectedItems: Sequence<TagItem>,
+    chipName: (TagItem) -> String,
+    onSelectedChanged: (TagItem) -> Unit,
 ) {
     Column(modifier = modifier.padding(8.dp)) {
         LazyRow {
-            items(items.size) {
-                val item = items[it]
+            items(
+                count = items.size,
+                key = { index -> requireNotNull(items[index.toLong()]).id }
+            ) { index ->
+                val chipItem by remember { derivedStateOf { requireNotNull(items[index.toLong()]) } }
+
                 Chip(
-                    name = chipName(item),
-                    isSelected = selectedItems.contains(item),
+                    name = chipName(chipItem),
+                    isSelected = selectedItems.contains(chipItem),
                     onSelectionChanged = {
-                        onSelectedChanged(item)
+                        onSelectedChanged(chipItem)
                     },
                 )
             }
@@ -52,7 +61,7 @@ fun Chip(
     name: String,
     isSelected: Boolean = false,
     onSelectionChanged: (String) -> Unit = {},
-    selectedBackgroundColor: Color = MaterialTheme.colorScheme.primary
+    selectedBackgroundColor: Color = MaterialTheme.colorScheme.primary,
 ) {
 
     val backgroundColor = if (isSelected) selectedBackgroundColor else Color.Unspecified

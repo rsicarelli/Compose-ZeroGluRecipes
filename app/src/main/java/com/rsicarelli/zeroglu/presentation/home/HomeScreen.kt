@@ -1,19 +1,19 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.rsicarelli.zeroglu_recipes.presentation.home
+package com.rsicarelli.zeroglu.presentation.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -22,9 +22,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,16 +40,17 @@ import androidx.constraintlayout.compose.ConstraintLayoutScope
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.rsicarelli.zeroglu_recipes.data.RecipeRemoteDataSource
-import com.rsicarelli.zeroglu_recipes.domain.model.Recipe
-import com.rsicarelli.zeroglu_recipes.domain.model.Tag
-import com.rsicarelli.zeroglu_recipes.presentation.destinations.RecipeDetailScreenDestination
-import com.rsicarelli.zeroglu_recipes.presentation.home.components.ChipGroup
+import com.rsicarelli.zeroglu.data.RecipeRemoteDataSource
+import com.rsicarelli.zeroglu.presentation.destinations.RecipeDetailScreenDestination
+import com.rsicarelli.zeroglu.presentation.home.components.ChipGroup
 
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @RootNavGraph(start = true)
 @Destination
 @Composable
@@ -56,65 +60,87 @@ fun HomeScreen(
     ),
     navigator: DestinationsNavigator,
 ) {
-    val recipes by viewModel.recipes.collectAsState()
-    val tags by viewModel.tags.collectAsState()
-    val selectedTags by viewModel.selectedTags.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
-    Content(tags, selectedTags, viewModel, recipes, navigator)
+    if (state.recipeItems.isNotEmpty()) {
+        HomeContent(
+            tags = state.tags,
+            selectedTags = state.selectedTags,
+            recipes = state.recipeItems,
+            onTagSelected = viewModel::onTagSelected,
+            navigator = navigator,
+        )
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun Content(
-    tags: List<Tag>,
-    selectedTags: Set<Tag>,
-    viewModel: HomeViewModel,
-    recipes: List<Recipe>,
+private fun HomeContent(
+    tags: ComposeLazyList<TagItem>,
+    selectedTags: Sequence<TagItem>,
+    recipes: ComposeLazyList<RecipeItem>,
+    onTagSelected: (TagItem) -> Unit,
     navigator: DestinationsNavigator,
 ) {
+    var recipeToNavigate by remember { mutableStateOf<RecipeItem?>(null) }
+
+    LaunchedEffect(
+        key1 = recipeToNavigate != null,
+        block = {
+            recipeToNavigate?.let { recipeItem ->
+                navigator.navigate(RecipeDetailScreenDestination(recipeItem))
+            }
+        }
+    )
+
     LazyColumn(
         contentPadding = PaddingValues(8.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         content = {
             stickyHeader {
-                Header(tags, selectedTags, viewModel)
+                TagsStickyHeader(
+                    tags = tags,
+                    selectedTags = selectedTags,
+                    onTagSelected = onTagSelected
+                )
             }
 
             items(
-                count = recipes.size,
-                key = { recipes[it].index }
-            ) {
-                val recipe = recipes[it]
+                count = recipes.count(),
+                key = { index ->
+                    recipes[index + 1.toLong()]?.index!!
+                }
+            ) { index ->
+                val recipeItem by remember { derivedStateOf { requireNotNull(recipes[index + 1.toLong()]) } }
+
                 RecipeItem(
-                    recipe = recipe,
-                    onNavigateToDetail = {
-                        navigator.navigate(RecipeDetailScreenDestination(recipe))
-                    }
+                    recipe = recipeItem,
+                    onNavigateToDetail = { recipeToNavigate = recipeItem }
                 )
             }
-        })
+        }
+    )
 }
 
 @Composable
-private fun Header(
-    tags: List<Tag>,
-    selectedTags: Set<Tag>,
-    viewModel: HomeViewModel,
+private fun TagsStickyHeader(
+    modifier: Modifier = Modifier,
+    tags: ComposeLazyList<TagItem>,
+    selectedTags: Sequence<TagItem>,
+    onTagSelected: (TagItem) -> Unit,
 ) {
-    Column(modifier = Modifier.fillMaxWidth()) {
-        ChipGroup(
-            modifier = Modifier.background(MaterialTheme.colorScheme.surface),
-            items = tags,
-            selectedItems = selectedTags.toList(),
-            onSelectedChanged = { viewModel.onTagSelected(it) },
-            chipName = { it.description["en"] ?: "" }
-        )
-    }
+    ChipGroup(
+        modifier = modifier.background(MaterialTheme.colorScheme.surface),
+        items = tags,
+        selectedItems = selectedTags,
+        onSelectedChanged = onTagSelected,
+        chipName = TagItem::description
+    )
 }
 
 @Composable
 private fun RecipeItem(
-    recipe: Recipe,
+    recipe: RecipeItem,
     onNavigateToDetail: () -> Unit,
 ) {
     Card(
@@ -132,12 +158,14 @@ private fun RecipeItem(
 
             IndexTitle(indexRef, recipe.index.toString())
 
-            val tags = derivedStateOf {
-                recipe.tags.filterNot {
-                    it.description.containsValue("Loaf") ||
-                        it.description.containsValue("Pizza") ||
-                        it.description.containsValue("Ciabatta") ||
-                        it.description.containsValue("Roll")
+            val tags by derivedStateOf {
+                recipe.tags.filterNot { (_, tagItem) ->
+                    with(tagItem) {
+                        description.contains("Loaf") ||
+                            description.contains("Pizza") ||
+                            description.contains("Ciabatta") ||
+                            description.contains("Roll")
+                    }
                 }
             }
 
@@ -164,9 +192,13 @@ private fun RecipeItem(
                     },
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(tags.value.size, key = { tags.value[it].id }) {
-                    val tag = tags.value[it].description["en"].orEmpty()
-                    RecipeItemChip(tag)
+                items(
+                    items = tags.values.toList(),
+                    key = TagItem::id
+                ) { tagItem ->
+                    RecipeItemChip(
+                        tagName = tagItem.description
+                    )
                 }
             }
         }
@@ -214,7 +246,7 @@ private fun ConstraintLayoutScope.IndexTitle(
 }
 
 @Composable
-private fun RecipeItemChip(tag: String) {
+private fun RecipeItemChip(tagName: String) {
     Box(
         modifier = Modifier
             .border(
@@ -228,7 +260,7 @@ private fun RecipeItemChip(tag: String) {
     ) {
         Text(
             modifier = Modifier.padding(8.dp),
-            text = tag,
+            text = tagName,
             style = MaterialTheme.typography.labelMedium
         )
     }

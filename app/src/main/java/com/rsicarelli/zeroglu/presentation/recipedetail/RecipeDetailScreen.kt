@@ -1,4 +1,4 @@
-package com.rsicarelli.zeroglu_recipes.presentation
+package com.rsicarelli.zeroglu.presentation.recipedetail
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
@@ -23,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -30,100 +30,103 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ramcosta.composedestinations.annotation.Destination
-import com.rsicarelli.zeroglu_recipes.R
-import com.rsicarelli.zeroglu_recipes.domain.model.Ingredient
-import com.rsicarelli.zeroglu_recipes.domain.model.Recipe
+import com.rsicarelli.zeroglu.R
+import com.rsicarelli.zeroglu.presentation.home.IngredientItem
+import com.rsicarelli.zeroglu.presentation.home.InstructionItem
+import com.rsicarelli.zeroglu.presentation.home.RecipeItem
+import com.rsicarelli.zeroglu.presentation.home.SetupItem
 
 @Destination
 @Composable
-fun RecipeDetailScreen(recipe: Recipe) {
+fun RecipeDetailScreen(recipeItem: RecipeItem) {
+    RecipeDetailContent(recipeItem = recipeItem)
+}
 
+@Composable
+private fun RecipeDetailContent(
+    modifier: Modifier = Modifier,
+    recipeItem: RecipeItem,
+) {
     LazyColumn(
+        modifier = modifier,
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(40.dp)
     ) {
-        item {
-            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                Title(recipe.title)
-                SettingsContainer(recipe)
-            }
+        item(key = recipeItem.title) { Title(recipeItem.title) }
+        item(key = recipeItem.setup) { SettingsContainer(recipeItem.setup) }
+        item(key = recipeItem.ingredients) { IngredientsContainer(recipeItem.ingredients) }
+        item(key = recipeItem.instructions) { Instructions(recipeItem.instructions) }
+    }
+}
+
+@Composable
+private fun Instructions(instructionsItem: Sequence<InstructionItem>) {
+    instructionsItem.forEachIndexed { index, instructionItems ->
+        if (index > 0) {
+            Spacer(modifier = Modifier.height(16.dp))
         }
 
-        item { IngredientsContainer(recipe.ingredients) }
+        requireNotNull(instructionItems.title)
 
-        item {
-            recipe.instructions.filter { it.steps.any { a -> a.isNotEmpty() } }
-                .forEachIndexed { index, instruction ->
-                    if (index > 0) {
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
-                    Column {
-                        Text(
-                            fontWeight = FontWeight.Medium,
-                            fontStyle = FontStyle.Italic,
-                            text = instruction.custom_title ?: "Method",
-                            style = MaterialTheme.typography.titleLarge
-                        )
+        Column {
+            Text(
+                fontWeight = FontWeight.Medium,
+                fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+                text = instructionItems.title,
+                style = MaterialTheme.typography.titleLarge
+            )
 
-                        Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-                        instruction.steps.filter { it.isNotEmpty() }
-                            .forEachIndexed { index, step ->
-                                Text(
-                                    text = "${index + 1}. $step",
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
-                            }
-                    }
+            instructionItems
+                .steps
+                .forEachIndexed { index, step ->
+                    Text(
+                        text = "${index + 1}. $step",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
                 }
         }
     }
 }
 
 @Composable
-private fun IngredientsContainer(ingredients: List<Ingredient>) {
+private fun IngredientsContainer(
+    ingredients: Sequence<IngredientItem>,
+) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        ingredients.map { ingredient ->
+        Text(
+            fontWeight = FontWeight.Medium,
+            fontStyle = FontStyle.Italic,
+            text = stringResource(id = R.string.ingredients),
+            style = MaterialTheme.typography.titleLarge
+        )
 
-            Text(
-                fontWeight = FontWeight.Medium,
-                fontStyle = FontStyle.Italic,
-                text = ingredient.custom_title?.ifBlank { "Ingredients" } ?: "Ingredients",
-                style = MaterialTheme.typography.titleLarge
-            )
+        Column {
+            ingredients.asSequence().forEach { ingredientItem ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        modifier = Modifier.weight(0.22F),
+                        text = ingredientItem.value.first,
+                        textAlign = TextAlign.End,
+                        maxLines = 1,
+                        style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp),
+                        overflow = TextOverflow.Ellipsis,
+                    )
 
-            val valueAndDescription = ingredient.items
-                .map { it.splitToSequence(":") }
-                .map { Pair(it.first().trim(), it.last().trim()) }
-
-            Column {
-                valueAndDescription.forEach {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Text(
-                            modifier = Modifier.weight(0.22F),
-                            text = it.first,
-                            textAlign = TextAlign.End,
-                            maxLines = 1,
-                            style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp),
-                            overflow = TextOverflow.Ellipsis,
-                        )
-
-                        Spacer(modifier = Modifier.width(8.dp))
-
-                        Text(
-                            text = it.second,
-                            style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp),
-                            textAlign = TextAlign.Start,
-                            modifier = Modifier.weight(0.77f),
-                        )
-                    }
+                    Text(
+                        text = ingredientItem.value.second,
+                        style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp),
+                        textAlign = TextAlign.Start,
+                        modifier = Modifier.weight(0.77f),
+                    )
                 }
-
             }
         }
     }
@@ -139,13 +142,13 @@ private fun Title(recipe: String) {
 }
 
 @Composable
-private fun SettingsContainer(recipe: Recipe) {
+private fun SettingsContainer(setupItems: Sequence<SetupItem>) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        recipe.setup.forEach { setup ->
-            setup.custom_title?.let {
+        setupItems.forEach { setupItem ->
+            setupItem.title?.let {
                 Text(
                     fontWeight = FontWeight.Medium,
                     fontStyle = FontStyle.Italic,
@@ -159,7 +162,7 @@ private fun SettingsContainer(recipe: Recipe) {
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                setup.bread_shapes.filter { it.isNotEmpty() }.forEach { shape ->
+                setupItem.breadShapes.value.filter { it.isNotEmpty() }.forEach { shape ->
                     Icon(
                         modifier = Modifier.size(48.dp),
                         painter = painterResource(
@@ -177,14 +180,14 @@ private fun SettingsContainer(recipe: Recipe) {
                 Icon(
                     modifier = Modifier.size(48.dp),
                     painter = painterResource(
-                        id = when (setup.browning_level) {
+                        id = when (setupItem.browningLevel.value) {
                             "low" -> R.drawable.ic_browning_low
                             "medium" -> R.drawable.ic_browning_medium
                             "high" -> R.drawable.ic_browning_high
                             else -> -1
                         }
                     ),
-                    contentDescription = setup.browning_level
+                    contentDescription = setupItem.browningLevel.value
                 )
 
                 Box(
@@ -212,7 +215,7 @@ private fun SettingsContainer(recipe: Recipe) {
                         }) {
 
                     Text(
-                        text = setup.programme.toString(),
+                        text = setupItem.programme.toString(),
                         textAlign = TextAlign.Center,
                         fontWeight = FontWeight.Black,
                         modifier = Modifier

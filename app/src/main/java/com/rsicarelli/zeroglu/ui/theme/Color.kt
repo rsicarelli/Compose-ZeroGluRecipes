@@ -1,4 +1,4 @@
-package com.rsicarelli.zeroglu_recipes.ui.theme
+package com.rsicarelli.zeroglu.ui.theme
 
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme

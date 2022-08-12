@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.rsicarelli.zeroglu_recipes">
+    package="com.rsicarelli.zeroglu">
 
     <application
         android:allowBackup="true"
@@ -14,7 +14,7 @@
         android:theme="@style/Theme.ZeroGluRecipes"
         tools:targetApi="31">
         <activity
-            android:name=".presentation.MainActivity"
+            android:name="com.rsicarelli.zeroglu.presentation.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.ZeroGluRecipes">
@@ -31,7 +31,7 @@
             android:exported="false"
             tools:node="merge">
             <meta-data
-                android:name="com.rsicarelli.zeroglu_recipes.data.RecipeInitializer"
+                android:name="com.rsicarelli.zeroglu.data.RecipeInitializer"
                 android:value="androidx.startup" />
         </provider>
     </application>

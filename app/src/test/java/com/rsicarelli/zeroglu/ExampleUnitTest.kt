@@ -1,4 +1,4 @@
-package com.rsicarelli.zeroglu_recipes
+package com.rsicarelli.zeroglu
 
 import org.junit.Test
 

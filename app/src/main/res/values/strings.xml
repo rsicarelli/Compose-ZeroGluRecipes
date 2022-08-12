@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ZeroGlu Recipes</string>
+    <string name="ingredients">Ingredients</string>
 </resources>
