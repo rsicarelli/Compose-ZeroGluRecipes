@@ -25,8 +25,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.rsicarelli.zeroglu.presentation.home.ComposeLazyList
 import com.rsicarelli.zeroglu.presentation.home.TagItem
+import com.rsicarelli.zeroglu.ui.ComposeLazyList
 
 @Composable
 fun ChipGroup(

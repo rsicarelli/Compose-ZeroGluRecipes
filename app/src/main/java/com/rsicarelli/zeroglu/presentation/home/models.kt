@@ -6,9 +6,8 @@ import com.rsicarelli.zeroglu.domain.model.Instruction
 import com.rsicarelli.zeroglu.domain.model.Recipe
 import com.rsicarelli.zeroglu.domain.model.Setup
 import com.rsicarelli.zeroglu.domain.model.Tag
+import com.rsicarelli.zeroglu.ui.ComposeLazyList
 import kotlinx.serialization.Serializable
-
-typealias ComposeLazyList <T> = Map<Long, T>
 
 //region HomeState
 @Immutable

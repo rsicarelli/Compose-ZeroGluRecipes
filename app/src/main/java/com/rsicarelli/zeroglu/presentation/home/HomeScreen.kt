@@ -21,6 +21,9 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.rsicarelli.zeroglu.presentation.destinations.RecipeDetailScreenDestination
 import com.rsicarelli.zeroglu.presentation.home.HomeContentDefaults.DefaultContentPadding
 import com.rsicarelli.zeroglu.presentation.home.HomeContentDefaults.DefaultVerticalArrangement
+import com.rsicarelli.zeroglu.presentation.home.components.RecipeItem
+import com.rsicarelli.zeroglu.presentation.home.components.TagsStickyHeader
+import com.rsicarelli.zeroglu.ui.ComposeLazyList
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
 @RootNavGraph(start = true)
