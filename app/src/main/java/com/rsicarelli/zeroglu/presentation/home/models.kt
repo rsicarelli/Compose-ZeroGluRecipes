@@ -27,23 +27,36 @@ object UnknownError : ErrorItem
 //region RecipeItem
 internal
 
-fun List<Recipe>.toRecipeItems(): ComposeLazyList<RecipeItem> {
+fun List<Recipe>.toRecipeItems(selectedTags: Sequence<TagItem>): ComposeLazyList<RecipeItem> {
     val tagsItem = mutableMapOf<Long, RecipeItem>()
 
-    asSequence().forEachIndexed { _, recipe ->
-        with(recipe) {
-            tagsItem[index.toLong()] = RecipeItem(
-                index = index,
-                title = title,
-                totalTimeMillis = totalTimeMillis,
-                setup = setup.toSetupItems(),
-                ingredients = ingredients.toIngredientsItems(),
-                instructions = instructions.toInstructionsItems(),
-                language = language,
-                tags = tags.toTagsItem(),
-            )
+
+    asSequence()
+        .filter {
+            if (selectedTags.count() > 0) {
+                it.tags.any { tag ->
+                    selectedTags.any { tagItem ->
+                        tagItem.id == tag.id
+                    }
+                }
+            } else {
+                true
+            }
         }
-    }
+        .forEachIndexed { _, recipe ->
+            with(recipe) {
+                tagsItem[index.toLong()] = RecipeItem(
+                    index = index,
+                    title = title,
+                    totalTimeMillis = totalTimeMillis,
+                    setup = setup.toSetupItems(),
+                    ingredients = ingredients.toIngredientsItems(),
+                    instructions = instructions.toInstructionsItems(),
+                    language = language,
+                    tags = tags.toTagsItem(),
+                )
+            }
+        }
     return tagsItem
 }
 

@@ -29,9 +29,11 @@ import com.rsicarelli.zeroglu.presentation.home.components.RecipeItemDefaults.Ve
 
 @Composable
 internal fun RecipeItem(
+    modifier: Modifier = Modifier,
     recipe: RecipeItem,
     onNavigateToDetail: () -> Unit,
 ) = RecipeItemContent(
+    modifier = modifier,
     onNavigateToDetail = onNavigateToDetail,
     recipe = recipe
 )

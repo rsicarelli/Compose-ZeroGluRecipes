@@ -42,27 +42,13 @@ class HomeViewModel(
         )
 
     private suspend fun HomeState(
-        recipeItems: List<Recipe>,
+        recipes: List<Recipe>,
         tags: List<Tag>,
         selectedTags: Sequence<TagItem>,
         coroutineContext: CoroutineContext = Dispatchers.Default,
     ): HomeState = supervisorScope {
         HomeState(
-            recipeItems = withContext(coroutineContext) {
-                recipeItems
-                    .filter {
-                        if (selectedTags.count() > 0) {
-                            it.tags.any { tag ->
-                                selectedTags.any { tagItem ->
-                                    tagItem.id == tag.id
-                                }
-                            }
-                        } else {
-                            true
-                        }
-                    }
-                    .toRecipeItems()
-            },
+            recipeItems = withContext(coroutineContext) { recipes.toRecipeItems(selectedTags) },
             tags = withContext(coroutineContext) { tags.toTagsItem() },
             selectedTags = selectedTags,
         )

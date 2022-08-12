@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -81,6 +82,7 @@ private fun HomeContent(
                     { onRecipeSelected(recipeItem) }
                 }
                 RecipeItem(
+                    modifier = Modifier.animateItemPlacement(),
                     recipe = recipeItem,
                     onNavigateToDetail = onNavigateToDetail
                 )
