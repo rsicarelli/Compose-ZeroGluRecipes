@@ -60,17 +60,18 @@ android {
 
 dependencies {
     implementation(libs.androidx.startup.runtime)
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.1")
     implementation(libs.androidx.core)
-    implementation(libs.bundles.compose)
     implementation(libs.androidx.lifecycle.viewmodel)
-    implementation(libs.androidx.lifecycle.runtime)
 
-    implementation("com.google.android.material:material:1.6.0-beta01")
-    implementation(libs.compose.destinations.animations)
-    ksp(libs.compose.destinations.ksp)
+    implementation(libs.bundles.compose)
     debugImplementation(libs.bundles.composeDebug)
 
-    implementation("com.google.firebase:firebase-firestore-ktx:24.1.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+    implementation(libs.compose.destinations.animations)
+    ksp(libs.compose.destinations.ksp)
+
+    implementation(libs.kotlin.coroutines.play.services)
+    implementation(libs.google.material)
+
+    implementation(libs.firebase.firestore.ktx)
+    implementation(libs.kotlin.serialization.json)
 }
