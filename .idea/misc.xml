@@ -4,11 +4,13 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../../layout/custom_preview.xml" value="0.2314148681055156" />
+        <entry key="app/src/main/res/drawable/bread__4_.xml" value="0.229" />
         <entry key="app/src/main/res/drawable/ic_browning.xml" value="0.5" />
         <entry key="app/src/main/res/drawable/ic_browning_medium.xml" value="0.335" />
         <entry key="app/src/main/res/drawable/ic_form_medium.xml" value="0.2245" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.2775" />
         <entry key="app/src/main/res/drawable/icon.xml" value="0.2245" />
+        <entry key="app/src/main/res/drawable/toast.xml" value="0.1775" />
       </map>
     </option>
   </component>

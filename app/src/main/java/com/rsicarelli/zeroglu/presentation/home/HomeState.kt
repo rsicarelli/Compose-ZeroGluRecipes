@@ -1,6 +1,7 @@
 package com.rsicarelli.zeroglu.presentation.home
 
 import androidx.compose.runtime.Immutable
+import com.rsicarelli.zeroglu.R
 import com.rsicarelli.zeroglu.domain.Ingredient
 import com.rsicarelli.zeroglu.domain.Instruction
 import com.rsicarelli.zeroglu.domain.Recipe
@@ -116,7 +117,7 @@ private fun List<Setup>.toSetupItems(): List<SetupItem> =
     asSequence().map { (title, breadShapes, browningLevel, programme) ->
         SetupItem(
             title = title,
-            breadShapes = BreadShapes(breadShapes),
+            breadShapes = BreadShapes(breadShapes.map(::BreadShape)),
             browningLevel = BrowningLevel(browningLevel),
             programme = Programme(programme)
         )
@@ -133,7 +134,11 @@ data class SetupItem(
 
 @JvmInline
 @Serializable
-value class BreadShapes(val value: List<String>)
+value class BreadShapes(val value: List<BreadShape>)
+
+@JvmInline
+@Serializable
+value class BreadShape(val value: String)
 
 @JvmInline
 @Serializable

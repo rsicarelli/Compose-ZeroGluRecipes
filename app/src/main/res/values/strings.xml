@@ -2,4 +2,7 @@
     <string name="app_name">ZeroGlu Recipes</string>
     <string name="ingredients">Ingredients</string>
     <string name="instructions">Instructions</string>
+    <string name="setup">Setup</string>
+    <string name="expand">Expand</string>
+    <string name="collapse">Collapse</string>
 </resources>
