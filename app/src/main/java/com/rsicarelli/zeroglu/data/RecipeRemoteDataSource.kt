@@ -44,12 +44,10 @@ internal class RecipeRemoteDataSourceImpl : RecipeRemoteDataSource {
                     requireNotNull(value)
 
                     launch(Dispatchers.IO) {
-                        value.map { queryDocumentSnapshot -> async { queryDocumentSnapshot.toObject<RecipeDto>() } }
+                        value.map { async { it.toObject<RecipeDto>() } }
                             .awaitAll()
                             .sortedBy(RecipeDto::index)
-                            .map {
-                                async { it.toRecipe() }
-                            }
+                            .map { async { it.toRecipe() } }
                             .awaitAll()
                             .let { recipes ->
                                 trySendBlocking(recipes)
@@ -83,10 +81,16 @@ private data class RecipeDto(
             ingredients = ingredients.map(IngredientDto::toDomain),
             instructions = instructions.map(InstructionDto::toDomain),
             language = language,
-            tags = tags.toDomain()
+            tags = toTagDomain()
         )
 
-    //Firebase requires a constructor like this to work with Serializable
+    private suspend fun toTagDomain(): List<Tag> =
+        coroutineScope {
+            tags.map { documentReference -> async { documentReference.await() } }
+                .awaitAll()
+                .mapNotNull { it.toObject(Tag::class.java) }
+        }
+
     @Suppress("unused")
     constructor() : this(
         index = 0,
@@ -130,6 +134,7 @@ private data class InstructionDto(
             steps = steps
         )
 
+    @Suppress("unused")
     constructor() : this("", emptyList())
 }
 
@@ -154,12 +159,6 @@ private data class SetupDto(
             programme = programme
         )
 
+    @Suppress("unused")
     constructor() : this("", emptyList(), "", 0L)
 }
-
-private suspend fun List<DocumentReference>.toDomain(): List<Tag> =
-    coroutineScope {
-        map { documentReference -> async { documentReference.await() } }
-            .awaitAll()
-            .mapNotNull { it.toObject(Tag::class.java) }
-    }

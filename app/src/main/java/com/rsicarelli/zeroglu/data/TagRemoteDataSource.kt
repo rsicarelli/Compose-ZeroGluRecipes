@@ -1,6 +1,5 @@
 package com.rsicarelli.zeroglu.data
 
-import android.util.Log
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
@@ -9,7 +8,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.onFailure
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -36,13 +34,9 @@ internal class TagRemoteDataSourceImpl : TagRemoteDataSource {
                 requireNotNull(value)
 
                 launch(Dispatchers.IO) {
-                    value.map { async { it.toObject<Tag>() } }
-                        .awaitAll()
+                    value.map { async { it.toObject<Tag>() } }.awaitAll()
                         .let { tags ->
                             trySendBlocking(tags)
-                                .onFailure {
-                                    Log.e("TagRemoteDataSource", "Error sending tag back to subscriber", error)
-                                }
                         }
                 }
             }.let { awaitClose(it::remove) }
