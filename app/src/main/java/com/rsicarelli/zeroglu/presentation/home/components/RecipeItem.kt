@@ -60,7 +60,7 @@ private fun RecipeItemContent(
 
             Text(
                 text = recipe.title.trim(),
-                style = MaterialTheme.typography.headlineMedium,
+                style = MaterialTheme.typography.headlineLarge,
             )
 
             LazyRow(
@@ -103,7 +103,7 @@ private fun RecipeItemChip(
 private object RecipeItemDefaults {
 
     @Stable
-    val CardShape = 32.dp
+    val CardShape = 60.dp
 
     @Stable
     val HorizontalPadding = 24.dp

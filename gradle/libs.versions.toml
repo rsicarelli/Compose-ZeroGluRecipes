@@ -5,6 +5,7 @@ androidxCore = "1.8.0"
 androidxLifecycle = "2.6.0-alpha01"
 androidxStartupRuntime = "1.1.1"
 compose = "1.2.0-rc02"
+coilCompose = "2.1.0"
 composeCustomView = "1.2.0-alpha01"
 composeCustomViewContainer = "1.0.0-rc01"
 composeDestinations = "1.6.12-beta"
@@ -27,6 +28,7 @@ compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
 compose-custom-view = { module = "androidx.customview:customview", version.ref = "composeCustomView" }
+compose-coil = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 compose-customview-poolingcontainter = { module = "androidx.customview:customview-poolingcontainer", version.ref = "composeCustomViewContainer" }
 compose-material = { module = "androidx.compose.material:material", version.ref = "compose" }
 compose-material3 = { module = "androidx.compose.material3:material3", version = "1.0.0-alpha16" }
@@ -59,6 +61,7 @@ compose = [
     "compose-ui-tooling-preview",
     "compose-constraintLayout",
     "compose-activity",
+    "compose-coil",
     "androidx-lifecycle-compose"
 ]
 
