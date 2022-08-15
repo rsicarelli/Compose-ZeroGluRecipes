@@ -4,7 +4,7 @@ import javax.annotation.concurrent.Immutable
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-@Immutable
+
 @Serializable
 data class Recipe(
     val index: Int,

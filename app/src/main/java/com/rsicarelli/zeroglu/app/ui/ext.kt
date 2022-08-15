@@ -1,3 +1,3 @@
-package com.rsicarelli.zeroglu.ui
+package com.rsicarelli.zeroglu.app.ui
 
 typealias ComposeLazyList <T> = Map<Long, T>

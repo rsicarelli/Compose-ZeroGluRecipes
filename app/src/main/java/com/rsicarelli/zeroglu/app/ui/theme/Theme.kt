@@ -1,4 +1,4 @@
-package com.rsicarelli.zeroglu.ui.theme
+package com.rsicarelli.zeroglu.app.ui.theme
 
 import android.os.Build
 import androidx.annotation.RequiresApi

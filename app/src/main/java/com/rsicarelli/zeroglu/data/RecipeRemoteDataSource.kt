@@ -1,7 +1,7 @@
 package com.rsicarelli.zeroglu.data
 
-import android.util.Log
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.PropertyName
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
@@ -14,7 +14,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.onFailure
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -22,8 +21,6 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.serialization.Contextual
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 import org.koin.core.annotation.Factory
 
 private const val RecipesCollectionReference = "ZeroGlu-Pro"
@@ -49,60 +46,45 @@ internal class RecipeRemoteDataSourceImpl : RecipeRemoteDataSource {
                     launch(Dispatchers.IO) {
                         value.map { queryDocumentSnapshot -> async { queryDocumentSnapshot.toObject<RecipeDto>() } }
                             .awaitAll()
-                            .asSequence()
-                            .filter { recipeDto -> recipeDto.title.isNotBlank() }
                             .sortedBy(RecipeDto::index)
-                            .toList()
-                            .map { async { it.Recipe() } }
+                            .map {
+                                async { it.toRecipe() }
+                            }
                             .awaitAll()
-                            .let {
-                                trySendBlocking(it)
-                                    .onFailure { error ->
-                                        Log.e("RecipeRemoteDataSource", "Error sending recipe back to subscriber", error)
-                                    }
+                            .let { recipes ->
+                                trySendBlocking(recipes)
                             }
                     }
                 }.let { awaitClose(it::remove) }
-        }
-
-    private suspend fun RecipeDto.Recipe(): Recipe =
-        Recipe(
-            index = index,
-            title = title,
-            totalTimeMillis = totalTimeMillis,
-            setup = setup,
-            ingredients = ingredients,
-            instructions = instructions,
-            language = language,
-            tags = tagsDocumentReference.toTags()
-        )
-
-    private suspend fun List<DocumentReference>.toTags(): List<Tag> =
-        coroutineScope {
-            mapNotNull { documentReference -> async { documentReference.await() } }
-                .awaitAll()
-                .mapNotNull { documentSnapshot -> async { documentSnapshot.toObject<Tag>() } }
-                .awaitAll()
-                .filterNotNull()
         }
 }
 
 private suspend fun DocumentReference.await() = get().await()
 
-
-@Serializable
-data class RecipeDto(
+private data class RecipeDto(
     val index: Int,
     val title: String,
-    @SerialName("total_time_millis")
-    val totalTimeMillis: Long?,
-    val setup: List<Setup>,
-    val ingredients: List<Ingredient>,
-    val instructions: List<Instruction>,
+    @get:PropertyName("total_time_millis")
+    @set:PropertyName("total_time_millis")
+    var totalTimeMillis: Long?,
+    val setup: List<SetupDto>,
+    val ingredients: List<IngredientDto>,
+    val instructions: List<InstructionDto>,
     val language: String,
-    @SerialName("tags")
-    val tagsDocumentReference: List<@Contextual DocumentReference>,
+    val tags: List<@Contextual DocumentReference>,
 ) {
+
+    suspend fun toRecipe(): Recipe =
+        Recipe(
+            index = index,
+            title = title,
+            totalTimeMillis = totalTimeMillis,
+            setup = setup.map(SetupDto::toDomain),
+            ingredients = ingredients.map(IngredientDto::toDomain),
+            instructions = instructions.map(InstructionDto::toDomain),
+            language = language,
+            tags = tags.toDomain()
+        )
 
     //Firebase requires a constructor like this to work with Serializable
     @Suppress("unused")
@@ -114,6 +96,70 @@ data class RecipeDto(
         ingredients = emptyList(),
         instructions = emptyList(),
         language = "",
-        tagsDocumentReference = emptyList()
+        tags = emptyList()
     )
 }
+
+private data class IngredientDto(
+    @get:PropertyName("custom_title")
+    @set:PropertyName("custom_title")
+    var title: String? = null,
+    val items: List<String> = emptyList(),
+) {
+
+    fun toDomain() =
+        Ingredient(
+            title = title,
+            items = items
+        )
+
+    @Suppress("unused")
+    constructor() : this("", emptyList())
+}
+
+private data class InstructionDto(
+    @get:PropertyName("custom_title")
+    @set:PropertyName("custom_title")
+    var title: String? = null,
+    val steps: List<String> = emptyList(),
+) {
+
+    fun toDomain() =
+        Instruction(
+            title = title,
+            steps = steps
+        )
+
+    constructor() : this("", emptyList())
+}
+
+private data class SetupDto(
+    @get:PropertyName("custom_title")
+    @set:PropertyName("custom_title")
+    var title: String? = null,
+    @get:PropertyName("bread_shapes")
+    @set:PropertyName("bread_shapes")
+    var breadShapes: List<String> = emptyList(),
+    @get:PropertyName("browning_level")
+    @set:PropertyName("browning_level")
+    var browningLevel: String = "",
+    var programme: Long? = null,
+) {
+
+    fun toDomain() =
+        Setup(
+            title = title,
+            breadShapes = breadShapes,
+            browningLevel = browningLevel,
+            programme = programme
+        )
+
+    constructor() : this("", emptyList(), "", 0L)
+}
+
+private suspend fun List<DocumentReference>.toDomain(): List<Tag> =
+    coroutineScope {
+        map { documentReference -> async { documentReference.await() } }
+            .awaitAll()
+            .mapNotNull { it.toObject(Tag::class.java) }
+    }
