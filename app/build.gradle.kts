@@ -82,6 +82,9 @@ dependencies {
     implementation(libs.bundles.compose)
     debugImplementation(libs.bundles.composeDebug)
 
+    implementation(libs.bundles.koin)
+    ksp(libs.koin.ksp)
+
     implementation(libs.compose.destinations.animations)
     ksp(libs.compose.destinations.ksp)
 

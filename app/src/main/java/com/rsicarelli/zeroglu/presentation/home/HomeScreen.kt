@@ -25,13 +25,14 @@ import com.rsicarelli.zeroglu.presentation.home.HomeContentDefaults.DefaultConte
 import com.rsicarelli.zeroglu.presentation.home.HomeContentDefaults.DefaultVerticalArrangement
 import com.rsicarelli.zeroglu.presentation.home.components.RecipeItem
 import com.rsicarelli.zeroglu.presentation.home.components.TagsStickyHeader
+import org.koin.androidx.compose.getViewModel
 
 @RootNavGraph(start = true)
 @Destination
 @Composable
 @OptIn(ExperimentalLifecycleComposeApi::class)
-fun HomeScreen(
-    viewModel: HomeViewModel = remember(::HomeViewModel),
+internal fun HomeScreen(
+    viewModel: HomeViewModel = getViewModel(),
     navigator: DestinationsNavigator,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()

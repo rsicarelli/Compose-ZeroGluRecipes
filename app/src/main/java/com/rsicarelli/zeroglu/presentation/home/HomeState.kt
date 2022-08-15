@@ -1,11 +1,11 @@
 package com.rsicarelli.zeroglu.presentation.home
 
 import androidx.compose.runtime.Immutable
-import com.rsicarelli.zeroglu.domain.model.Ingredient
-import com.rsicarelli.zeroglu.domain.model.Instruction
-import com.rsicarelli.zeroglu.domain.model.Recipe
-import com.rsicarelli.zeroglu.domain.model.Setup
-import com.rsicarelli.zeroglu.domain.model.Tag
+import com.rsicarelli.zeroglu.domain.Ingredient
+import com.rsicarelli.zeroglu.domain.Instruction
+import com.rsicarelli.zeroglu.domain.Recipe
+import com.rsicarelli.zeroglu.domain.Setup
+import com.rsicarelli.zeroglu.domain.Tag
 import kotlinx.serialization.Serializable
 
 //region HomeState
@@ -26,11 +26,10 @@ object UnknownError : ErrorItem
 //region RecipeItem
 internal
 
-fun List<Recipe>.toRecipeItems(selectedTags: Sequence<TagItem>): List<RecipeItem> {
-
-    return asSequence()
-        .map { recipe ->
-            with(recipe) {
+fun List<Recipe>.toRecipeItems(selectedTags: Sequence<TagItem>): List<RecipeItem> =
+    asSequence()
+        .map {
+            with(it) {
                 RecipeItem(
                     index = index,
                     title = title,
@@ -45,7 +44,6 @@ fun List<Recipe>.toRecipeItems(selectedTags: Sequence<TagItem>): List<RecipeItem
         }
         .filter { it.tags.containsAll(selectedTags.toList()) }
         .toList()
-}
 
 @Immutable
 @Serializable
@@ -81,8 +79,8 @@ internal fun List<Tag>.toTagsItem(language: String = "en"): List<TagItem> =
     asSequence().map {
         TagItem(
             id = it.id,
-            isInternal = it.is_internal,
-            description = it.description["en"] ?: ""
+            isInternal = it.isInternal,
+            description = it.description[language] ?: ""
         )
     }.toList()
 

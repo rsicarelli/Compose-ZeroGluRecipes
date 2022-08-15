@@ -31,7 +31,7 @@
             android:exported="false"
             tools:node="merge">
             <meta-data
-                android:name="com.rsicarelli.zeroglu.data.RecipeInitializer"
+                android:name="com.rsicarelli.zeroglu.app.KoinInitializer"
                 android:value="androidx.startup" />
         </provider>
     </application>

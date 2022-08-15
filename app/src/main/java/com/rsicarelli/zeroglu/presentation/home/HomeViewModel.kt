@@ -5,8 +5,9 @@ import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rsicarelli.zeroglu.data.RecipeRemoteDataSource
-import com.rsicarelli.zeroglu.domain.model.Recipe
-import com.rsicarelli.zeroglu.domain.model.Tag
+import com.rsicarelli.zeroglu.data.TagRemoteDataSource
+import com.rsicarelli.zeroglu.domain.Recipe
+import com.rsicarelli.zeroglu.domain.Tag
 import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,18 +19,21 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.withContext
+import org.koin.android.annotation.KoinViewModel
 
 @Stable
-class HomeViewModel(
-    recipeRemoteDataSource: RecipeRemoteDataSource = RecipeRemoteDataSource.instance,
+@KoinViewModel
+internal class HomeViewModel(
+    recipeDataSource: RecipeRemoteDataSource,
+    tagDataSource: TagRemoteDataSource,
 ) : ViewModel() {
 
     private val selectedTagItems = MutableStateFlow<Sequence<TagItem>>(emptySequence())
 
     val state: StateFlow<HomeState> =
         combine(
-            flow = recipeRemoteDataSource.recipes,
-            flow2 = recipeRemoteDataSource.tags,
+            flow = recipeDataSource.recipes,
+            flow2 = tagDataSource.tags,
             flow3 = selectedTagItems,
             transform = ::HomeState
         ).catch {
