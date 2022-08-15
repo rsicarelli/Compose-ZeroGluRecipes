@@ -1,10 +1,12 @@
 package com.rsicarelli.zeroglu.presentation.recipedetail
 
+import android.icu.text.CaseMap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,6 +30,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
@@ -54,7 +58,9 @@ private fun RecipeDetailContent(
 ) {
     val scrollState = rememberScrollState()
 
-    Box(modifier = modifier) {
+    Box(
+        modifier = modifier.padding(bottom = 24.dp)
+    ) {
         val painter = rememberAsyncImagePainter(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(BreadsBgs.random())
@@ -114,12 +120,13 @@ private fun RecipeDetailContent(
 private fun Instructions(
     instructionsItem: List<InstructionItem>,
     spacer: @Composable () -> Unit = {
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
     },
 ) {
     ExpandableContainer(title = stringResource(id = R.string.instructions)) {
         instructionsItem.forEachIndexed { index, instructionItems ->
             if (index > 0) spacer()
+
 
             Column {
                 if (index > 0) {
@@ -136,10 +143,33 @@ private fun Instructions(
                 instructionItems
                     .steps
                     .forEachIndexed { index, step ->
-                        Text(
-                            text = "${index + 1}. $step",
-                            style = MaterialTheme.typography.bodyLarge
-                        )
+                        if (index > 0)
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text(
+                                modifier = Modifier
+                                    .align(Alignment.Top),
+                                text = "${index + 1}",
+                                textAlign = TextAlign.End,
+                                maxLines = 1,
+                                style = MaterialTheme.typography.bodyLarge,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+
+                            Text(
+                                modifier = Modifier
+                                    .weight(1F)
+                                    .padding(top = 2.dp)
+                                    .align(Alignment.CenterVertically),
+                                text = step,
+                                style = MaterialTheme.typography.bodyMedium,
+                                textAlign = TextAlign.Start,
+                            )
+                        }
                     }
             }
         }
@@ -177,8 +207,7 @@ private fun IngredientsContainer(
 private fun Title(title: String) {
     Text(
         text = title,
-        fontWeight = FontWeight.Medium,
-        style = MaterialTheme.typography.headlineMedium
+        style = MaterialTheme.typography.displaySmall
     )
 }
 
@@ -198,10 +227,10 @@ private fun SettingsContainer(
     val tableItems by remember {
         derivedStateOf {
             listOf(
-                TableItem("Frame:", breadShapes),
-                TableItem("Color:", setupItem.browningLevel.value),
-                TableItem("Menu:", setupItem.programme.value.toString()),
-                TableItem("Time:", "${TimeUnit.MILLISECONDS.toMinutes(totalTime ?: 0)} minutes"),
+                TableItem("Frame", breadShapes),
+                TableItem("Color", setupItem.browningLevel.value),
+                TableItem("Menu", setupItem.programme.value.toString()),
+                TableItem("Time", "${TimeUnit.MILLISECONDS.toMinutes(totalTime ?: 0)} minutes"),
             )
         }
     }
@@ -222,8 +251,6 @@ val BreadsBgs = listOf(
     R.drawable.bread_5,
     R.drawable.bread_6,
     R.drawable.bread_7,
-    R.drawable.bread_8,
-    R.drawable.bread_9,
     R.drawable.bread_10,
     R.drawable.bread_11,
     R.drawable.bread_12,
