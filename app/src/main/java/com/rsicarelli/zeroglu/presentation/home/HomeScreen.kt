@@ -43,6 +43,7 @@ internal fun HomeScreen(
         tags = state.tags,
         selectedTags = state.selectedTags,
         recipes = state.recipeItems,
+        isLoading = state.isLoading,
         onTagSelected = viewModel::onTagSelected,
         onRecipeSelected = onRecipeSelected
     )
@@ -56,6 +57,7 @@ private fun HomeContent(
     recipes: List<RecipeItem>,
     onTagSelected: (TagItem) -> Unit,
     onRecipeSelected: (RecipeItem) -> Unit,
+    isLoading: Boolean,
 ) {
     LazyColumn(
         modifier = Modifier.statusBarsPadding(),
@@ -64,6 +66,7 @@ private fun HomeContent(
         content = {
             stickyHeader(key = tags.hashCode()) {
                 TagsStickyHeader(
+                    isLoading = isLoading,
                     tags = tags,
                     selectedTags = selectedTags,
                     onTagSelected = onTagSelected
@@ -82,6 +85,7 @@ private fun HomeContent(
                     }
                     RecipeItem(
                         modifier = Modifier.animateItemPlacement(),
+                        isLoading = isLoading,
                         recipe = recipeItem,
                         onNavigateToDetail = onNavigateToDetail
                     )

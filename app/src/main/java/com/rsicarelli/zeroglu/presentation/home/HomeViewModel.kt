@@ -37,7 +37,7 @@ internal class HomeViewModel(
             flow3 = selectedTagItems,
             transform = ::HomeState
         ).catch {
-            emit(HomeState(errorItem = UnknownError))
+            emit(HomeState(errorItem = UnknownError, isLoading = false))
                 .also { Log.e("HomeViewModel", "Something wrong is not right $it") }
         }.stateIn(
             viewModelScope,
@@ -52,6 +52,7 @@ internal class HomeViewModel(
         coroutineContext: CoroutineContext = Dispatchers.Default,
     ): HomeState = supervisorScope {
         HomeState(
+            isLoading = tags.isEmpty() && recipes.isEmpty(),
             recipeItems = withContext(coroutineContext) { recipes.toRecipeItems(selectedTags) },
             tags = withContext(coroutineContext) { tags.toTagsItem() },
             selectedTags = selectedTags,

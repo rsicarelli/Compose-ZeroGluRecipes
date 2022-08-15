@@ -1,7 +1,6 @@
 package com.rsicarelli.zeroglu.presentation.home
 
 import androidx.compose.runtime.Immutable
-import com.rsicarelli.zeroglu.R
 import com.rsicarelli.zeroglu.domain.Ingredient
 import com.rsicarelli.zeroglu.domain.Instruction
 import com.rsicarelli.zeroglu.domain.Recipe
@@ -12,10 +11,15 @@ import kotlinx.serialization.Serializable
 //region HomeState
 @Immutable
 data class HomeState(
-    val recipeItems: List<RecipeItem> = listOf(),
-    val tags: List<TagItem> = listOf(),
+    val recipeItems: List<RecipeItem> = (0..4).mapIndexed { index, i -> RecipeItem(index = index + 99) },
+    val tags: List<TagItem> = (0..10).mapIndexed { index, i ->
+        TagItem(id = index.toString(),
+            description = "Placeholder",
+            isInternal = true)
+    },
     val selectedTags: Sequence<TagItem> = emptySequence(),
     val errorItem: ErrorItem? = null,
+    val isLoading: Boolean = true,
 )
 //endregion
 
@@ -50,13 +54,17 @@ fun List<Recipe>.toRecipeItems(selectedTags: Sequence<TagItem>): List<RecipeItem
 @Serializable
 data class RecipeItem(
     val index: Int,
-    val title: String,
-    val totalTimeMillis: Long?,
-    val setup: List<SetupItem>,
-    val ingredients: List<IngredientItem>,
-    val instructions: List<InstructionItem>,
-    val language: String,
-    val tags: List<TagItem>,
+    val title: String = "Placeholder",
+    val totalTimeMillis: Long? = null,
+    val setup: List<SetupItem> = emptyList(),
+    val ingredients: List<IngredientItem> = emptyList(),
+    val instructions: List<InstructionItem> = emptyList(),
+    val language: String? = null,
+    val tags: List<TagItem> = (0..10).mapIndexed { index, i ->
+        TagItem(id = index.toString(),
+            description = "Placeholder",
+            isInternal = true)
+    },
 )
 //endregion
 

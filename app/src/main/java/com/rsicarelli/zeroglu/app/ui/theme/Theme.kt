@@ -1,5 +1,6 @@
 package com.rsicarelli.zeroglu.app.ui.theme
 
+import android.graphics.Color.toArgb
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -33,7 +34,7 @@ fun AppTheme(
 
 fun setupErrorColors(colorScheme: ColorScheme, isLight: Boolean): ColorScheme {
     val harmonizedError =
-        MaterialColors.harmonize(error.toArgb(), colorScheme.primary.toArgb())
+        MaterialColors.harmonize(colorScheme.error.toArgb(), colorScheme.primary.toArgb())
     val roles = MaterialColors.getColorRoles(harmonizedError, isLight)
     //returns a colorScheme with newly harmonized error colors
     return colorScheme.copy(

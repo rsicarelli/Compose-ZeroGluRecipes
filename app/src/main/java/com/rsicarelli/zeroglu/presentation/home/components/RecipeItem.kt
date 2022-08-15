@@ -20,6 +20,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.rsicarelli.zeroglu.app.ui.defaultPlaceholder
 import com.rsicarelli.zeroglu.presentation.home.RecipeItem
 import com.rsicarelli.zeroglu.presentation.home.TagItem
 import com.rsicarelli.zeroglu.presentation.home.components.RecipeItemDefaults.CardShape
@@ -32,8 +33,10 @@ internal fun RecipeItem(
     modifier: Modifier = Modifier,
     recipe: RecipeItem,
     onNavigateToDetail: () -> Unit,
+    isLoading: Boolean,
 ) = RecipeItemContent(
     modifier = modifier,
+    isLoading = isLoading,
     onNavigateToDetail = onNavigateToDetail,
     recipe = recipe
 )
@@ -44,6 +47,7 @@ private fun RecipeItemContent(
     modifier: Modifier = Modifier,
     onNavigateToDetail: () -> Unit,
     recipe: RecipeItem,
+    isLoading: Boolean,
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -59,6 +63,7 @@ private fun RecipeItemContent(
         ) {
 
             Text(
+                modifier = Modifier.defaultPlaceholder(isLoading),
                 text = recipe.title.trim(),
                 style = MaterialTheme.typography.headlineSmall,
             )
@@ -71,6 +76,7 @@ private fun RecipeItemContent(
                     key = TagItem::id
                 ) { tagItem ->
                     RecipeItemChip(
+                        isLoading = isLoading,
                         tagName = tagItem.description
                     )
                 }
@@ -85,10 +91,13 @@ private fun RecipeItemChip(
     verticalPadding: Dp = 8.dp,
     horizontalPadding: Dp = 12.dp,
     tagName: String,
-    borderStroke: BorderStroke = BorderStroke(1.dp, colorScheme.onSurface.copy(alpha = 0.15F)),
+    isLoading: Boolean,
+    borderStroke: BorderStroke = BorderStroke(if (isLoading) 0.dp else 1.dp, colorScheme.onSurface.copy(alpha = 0.15F)),
 ) {
     Box(
-        modifier = modifier.border(borderStroke, MaterialTheme.shapes.extraLarge),
+        modifier = modifier
+            .border(borderStroke, MaterialTheme.shapes.extraLarge)
+            .defaultPlaceholder(isLoading),
     ) {
         Text(
             modifier = Modifier

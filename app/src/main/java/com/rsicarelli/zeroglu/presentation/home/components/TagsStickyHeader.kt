@@ -12,10 +12,12 @@ internal fun TagsStickyHeader(
     tags: List<TagItem>,
     selectedTags: Sequence<TagItem>,
     onTagSelected: (TagItem) -> Unit,
+    isLoading: Boolean,
 ) {
     ChipGroup(
         modifier = modifier.background(MaterialTheme.colorScheme.surface),
         items = tags,
+        isLoading = isLoading,
         selectedItems = selectedTags,
         onSelectedChanged = onTagSelected,
         chipName = TagItem::description

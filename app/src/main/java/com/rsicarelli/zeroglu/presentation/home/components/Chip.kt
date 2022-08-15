@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.rsicarelli.zeroglu.app.ui.defaultPlaceholder
 import com.rsicarelli.zeroglu.presentation.home.TagItem
 
 @Composable
@@ -32,6 +33,7 @@ fun ChipGroup(
     selectedItems: Sequence<TagItem>,
     chipName: (TagItem) -> String,
     onSelectedChanged: (TagItem) -> Unit,
+    isLoading: Boolean,
 ) {
     Column(modifier = modifier.padding(8.dp)) {
         LazyRow {
@@ -40,6 +42,7 @@ fun ChipGroup(
                 key = TagItem::id
             ) { chipItem ->
                 Chip(
+                    isLoading = isLoading,
                     name = chipName(chipItem),
                     isSelected = selectedItems.contains(chipItem),
                     onSelectionChanged = {
@@ -57,9 +60,11 @@ fun Chip(
     isSelected: Boolean = false,
     onSelectionChanged: (String) -> Unit = {},
     selectedBackgroundColor: Color = MaterialTheme.colorScheme.primary,
+    isLoading: Boolean,
 ) {
+    val backgroundColor = if (isSelected && !isLoading) selectedBackgroundColor else Color.Unspecified
 
-    val backgroundColor = if (isSelected) selectedBackgroundColor else Color.Unspecified
+
     Box(
         modifier = Modifier
             .padding(4.dp)
@@ -67,11 +72,15 @@ fun Chip(
                 backgroundColor,
                 MaterialTheme.shapes.large
             )
+            .defaultPlaceholder(isLoading,
+                color = MaterialTheme.colorScheme.surfaceVariant,
+                highlightColor = MaterialTheme.colorScheme.surface)
             .border(
-                width = if (isSelected) 0.dp else 1.dp,
-                color = if (isSelected) Color.Unspecified else MaterialTheme.colorScheme.onSurface.copy(
-                    alpha = 0.7F
-                ),
+                width = if (isSelected || isLoading) 0.dp else 1.dp,
+                color =
+                if (isSelected) Color.Unspecified
+                else if (isLoading) Color.Transparent
+                else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7F),
                 shape = MaterialTheme.shapes.large
             )
             .clip(MaterialTheme.shapes.large),
