@@ -42,7 +42,6 @@ fun ExpandableContainer(
     modifier: Modifier = Modifier,
     title: String,
     buttonSize: Dp = 50.dp,
-    topTitlePadding: Dp = 8.dp,
     enterTransition: EnterTransition = expandVertically() + fadeIn(initialAlpha = 0.2F),
     exitTransition: ExitTransition = shrinkVertically() + fadeOut(targetAlpha = 0.0f),
     content: @Composable () -> Unit,
@@ -58,7 +57,7 @@ fun ExpandableContainer(
 
         Text(
             modifier = Modifier.constrainAs(titleRef) {
-                top.linkTo(parent.top, topTitlePadding)
+                top.linkTo(parent.top)
                 start.linkTo(parent.start)
                 end.linkTo(collapseRef.start)
                 width = Dimension.fillToConstraints
@@ -85,7 +84,7 @@ fun ExpandableContainer(
             modifier = Modifier.constrainAs(animatedContentRef) {
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
-                top.linkTo(titleRef.bottom)
+                top.linkTo(titleRef.bottom, 8.dp)
             },
             visible = isExpanded,
             enter = enterTransition,
