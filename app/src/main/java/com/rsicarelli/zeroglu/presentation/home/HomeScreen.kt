@@ -3,6 +3,7 @@ package com.rsicarelli.zeroglu.presentation.home
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
@@ -57,6 +58,7 @@ private fun HomeContent(
     onRecipeSelected: (RecipeItem) -> Unit,
 ) {
     LazyColumn(
+        modifier = Modifier.statusBarsPadding(),
         contentPadding = PaddingValues(DefaultContentPadding),
         verticalArrangement = Arrangement.spacedBy(DefaultVerticalArrangement),
         content = {

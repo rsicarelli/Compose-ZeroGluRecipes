@@ -4,6 +4,7 @@ androidBuildTools = "7.2.2"
 androidxCore = "1.8.0"
 androidxLifecycle = "2.6.0-alpha01"
 androidxStartupRuntime = "1.1.1"
+accompanist = "0.24.13-rc"
 compose = "1.2.0-rc02"
 coilCompose = "2.1.0"
 composeCustomView = "1.2.0-alpha01"
@@ -36,6 +37,8 @@ compose-activity = { module = "androidx.activity:activity-compose", version.ref 
 compose-destinations-ksp = { module = "io.github.raamcosta.compose-destinations:ksp", version.ref = "composeDestinations" }
 compose-destinations-animations = { module = "io.github.raamcosta.compose-destinations:animations-core", version.ref = "composeDestinations" }
 compose-constraintLayout = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintLayoutCompose" }
+compose-accompanist-placeholder = { module = "com.google.accompanist:accompanist-placeholder-material", version.ref = "accompanist" }
+compose-accompanist-system-ui-controller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 
 #Google
 google-material = { module = "com.google.android.material:material", version = "1.6.1"}
@@ -62,6 +65,8 @@ compose = [
     "compose-constraintLayout",
     "compose-activity",
     "compose-coil",
+    "compose-accompanist-placeholder",
+    "compose-accompanist-system-ui-controller",
     "androidx-lifecycle-compose"
 ]
 

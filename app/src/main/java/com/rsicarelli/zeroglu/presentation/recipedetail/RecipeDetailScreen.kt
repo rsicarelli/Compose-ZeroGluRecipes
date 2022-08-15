@@ -1,6 +1,5 @@
 package com.rsicarelli.zeroglu.presentation.recipedetail
 
-import android.icu.text.CaseMap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -74,7 +73,6 @@ private fun RecipeDetailContent(
                     alpha = min(1f, 1 - (scrollState.value / 600f))
                     translationY = -scrollState.value * 0.1f
                 }
-
         ) {
             Image(
                 modifier = Modifier
