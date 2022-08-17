@@ -13,6 +13,8 @@
         <entry key="app/src/main/res/drawable/ic_round_expand_more_24.xml" value="0.3755" />
         <entry key="app/src/main/res/drawable/icon.xml" value="0.2245" />
         <entry key="app/src/main/res/drawable/toast.xml" value="0.1775" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.26" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.3755" />
       </map>
     </option>
   </component>
