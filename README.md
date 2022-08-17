@@ -1,14 +1,15 @@
+<p align="center">
+<img align="center" width="100" src="app/src/main/res/mipmap-xxxhdpi/ic_launcher.png">
 <h1 align="center">
-<img width="80" src="app/src/main/res/mipmap-xxxhdpi/ic_launcher.png">
 ZeroGlu Recipes
 </h1>
+</p>
 <h3 align="center">ZeroGlu Recipe is a small app that digitalize a physical baking book for the <a href="https://www.imetec.com/it/macchina-del-pane-imetec-zero-glu-pro.html "ZeroGlu machine">ZeroGlu machine</a></h3><br>
 
 <p align="center">
-<img src="previews/preview0.gif" width="270"/>
-<img width="300" src="previews/loading.gif">
-<img width="300" src="previews/filter.gif">
-<img width="300" src="previews/details.gif">
+<img width="250" src="preview/loading.gif">
+<img width="250" src="preview/filter.gif">
+<img width="250" src="preview/details.gif">
 </p>
 
 # License
