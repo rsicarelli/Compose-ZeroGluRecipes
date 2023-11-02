@@ -11,6 +11,7 @@ plugins {
 android {
     compileSdk = 33
 
+    namespace = "com.rsicarelli.zeroglu_recipes"
     defaultConfig {
         applicationId = "com.rsicarelli.zeroglu_recipes"
         minSdk = 26
